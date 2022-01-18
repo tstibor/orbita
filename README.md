@@ -25,14 +25,11 @@ or any other [Keplerian elements](http://en.wikipedia.org/wiki/Orbital_elements#
 SQL queries.
 
 ## Interactive Animations of Orbita
-Visualize trajectory of comet *1I/ʻOumuamua* 
-![oumuamua](http://www.stibor.net/orbita/screenshots/oumuamua.gif)
+Visualize trajectory of comet [1I/ʻOumuamua](http://www.stibor.net/orbita/screenshots/oumuamua.gif)
 
-Visualize first 1957 listed asteroids in MPCORB.DAT and rotate around X-axis.
-![asteroids-x-rotate](http://www.stibor.net/orbita/screenshots/asteroids-x-rotate.gif)
+Visualize [first 1957 listed asteroids](http://www.stibor.net/orbita/screenshots/asteroids-x-rotate.gif) in MPCORB.DAT and rotate around X-axis.
 
-Visualize first 4 listed asteroids in MPCORB.DAT with orbits, date, distance to earth/sun and magnitude.
-![asteroids-info](http://www.stibor.net/orbita/screenshots/asteroids-motion-small.gif)
+Visualize [first 4 listed asteroids](http://www.stibor.net/orbita/screenshots/asteroids-motion.gif) in MPCORB.DAT with orbits, date, distance to earth/sun and magnitude.
 
 ## Compile and Download
 For compiling orbita [Qt6](https://www.qt.io/download-open-source) and [libnova library](http://libnova.sourceforge.net/)
