@@ -1,0 +1,12 @@
+<!DOCTYPE RCC><RCC version="1.0">
+  <qresource prefix="/res/icons/">
+    <file alias="orbita.png">../res/icons/orbita.png</file>
+    <file alias="asteroid.png">../res/icons/asteroid.png</file>
+    <file alias="comet.png">../res/icons/comet.png</file>
+    <file alias="planets.png">../res/icons/planets.png</file>
+  </qresource>
+  <qresource prefix="/res/test/">
+    <file alias="MPCORB.DAT">../res/test/MPCORB.DAT</file>
+    <file alias="CometEls.txt">../res/test/CometEls.txt</file>
+  </qresource>
+</RCC>
