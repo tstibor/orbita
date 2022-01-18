@@ -20,24 +20,24 @@ The [Keplerian elements](https://en.wikipedia.org/wiki/Orbital_elements#Kepleria
 SELECT * FROM asteroids where type = 9
 ```
 and visualizing their positions:
-![jupiter-trojans](https://www.stibor.net/orbita/screenshots/jupiter-trojans.gif)
-or any other [Keplerian elements](https://en.wikipedia.org/wiki/Orbital_elements#Keplerian)
+![jupiter-trojans](http://www.stibor.net/orbita/screenshots/jupiter-trojans.gif)
+or any other [Keplerian elements](http://en.wikipedia.org/wiki/Orbital_elements#Keplerian)
 SQL queries.
 
 ## Interactive Animations of Orbita
 Visualize trajectory of comet *1I/ʻOumuamua* 
-![oumuamua](https://www.stibor.net/orbita/screenshots/oumuamua.gif)
+![oumuamua](http://www.stibor.net/orbita/screenshots/oumuamua.gif)
 
 Visualize first 1957 listed asteroids in MPCORB.DAT and rotate around X-axis.
-![asteroids-x-rotate](https://www.stibor.net/orbita/screenshots/asteroids-x-rotate.gif)
+![asteroids-x-rotate](http://www.stibor.net/orbita/screenshots/asteroids-x-rotate.gif)
 
 Visualize first 4 listed asteroids in MPCORB.DAT with orbits, date, distance to earth/sun and magnitude.
-![asteroids-info](https://www.stibor.net/orbita/screenshots/asteroids-motion.gif)
+![asteroids-info](http://www.stibor.net/orbita/screenshots/asteroids-motion.gif)
 
 ## Compile and Download
 For compiling orbita [Qt6](https://www.qt.io/download-open-source) and [libnova library](http://libnova.sourceforge.net/)
 is required. A binary executable for Windows 64 can be
-downloaded here: [orbita-0.1-win64.zip](http://libnova.sourceforge.net/orbita/windows/orbita-0.1-win64.zip)
+downloaded here: [orbita-0.1-win64.zip](http://www.stibor.net/orbita/windows/orbita-0.1-win64.zip)
 
 ## License
 This project itself is licensed under the [GPL-3 license](http://www.gnu.org/licenses/gpl-3.0.html).
