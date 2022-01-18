@@ -20,7 +20,7 @@ The [Keplerian elements](https://en.wikipedia.org/wiki/Orbital_elements#Kepleria
 SELECT * FROM asteroids where type = 9
 ```
 and visualizing their positions:
-![jupiter-trojans](http://www.stibor.net/orbita/screenshots/jupiter-trojans.gif)
+![jupiter-trojans](http://www.stibor.net/orbita/screenshots/jupiter-trojans.png)
 or any other [Keplerian elements](http://en.wikipedia.org/wiki/Orbital_elements#Keplerian)
 SQL queries.
 
@@ -32,7 +32,7 @@ Visualize first 1957 listed asteroids in MPCORB.DAT and rotate around X-axis.
 ![asteroids-x-rotate](http://www.stibor.net/orbita/screenshots/asteroids-x-rotate.gif)
 
 Visualize first 4 listed asteroids in MPCORB.DAT with orbits, date, distance to earth/sun and magnitude.
-![asteroids-info](http://www.stibor.net/orbita/screenshots/asteroids-motion.gif)
+![asteroids-info](http://www.stibor.net/orbita/screenshots/asteroids-motion-small.gif)
 
 ## Compile and Download
 For compiling orbita [Qt6](https://www.qt.io/download-open-source) and [libnova library](http://libnova.sourceforge.net/)
