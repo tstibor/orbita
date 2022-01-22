@@ -2,6 +2,7 @@
 #define SQLITE_H
 
 #include <QtSql>
+#include "types.h"
 #include "settings.h"
 
 #define QUERY           "SELECT * FROM "
@@ -43,8 +44,8 @@ private:
     QString m_connectionName;
 
 public slots:
-    bool addEntryAsteroid(const QVariantList &orbEntry);
-    bool addEntryComet(const QVariantList &orbEntry);
+    bool addEntryAsteroid(const struct asteroid_t &asteroid);
+    bool addEntryComet(const struct comet_t &comet);
 };
 
 #endif // SQLITE_H

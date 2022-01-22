@@ -13,7 +13,7 @@ and for asteroids [MPCORB.DAT](https://www.minorplanetcenter.net/iau/MPCORB/MPCO
 
 The [Keplerian elements](https://en.wikipedia.org/wiki/Orbital_elements#Keplerian) of files
 [CometEls.txt](https://www.minorplanetcenter.net/iau/MPCORB/CometEls.txt) and
-[MPCORB.DAT](https://www.minorplanetcenter.net/iau/MPCORB/MPCORB.DAT) are stored in a 
+[MPCORB.DAT](https://www.minorplanetcenter.net/iau/MPCORB/MPCORB.DAT) are stored in a
 [SQLite database](https://www.sqlite.org/index.html). This enables for instance querying
 [Jupiter trojan asteroids](https://en.wikipedia.org/wiki/Jupiter_trojan)
 ```
@@ -37,4 +37,4 @@ is required. A binary executable for Windows 64 can be
 downloaded here: [orbita-0.1-win64.zip](http://www.stibor.net/orbita/windows/orbita-0.1-win64.zip)
 
 ## License
-This project itself is licensed under the [GPL-3 license](http://www.gnu.org/licenses/gpl-3.0.html).
+This project is licensed under the [GPL-3 license](http://www.gnu.org/licenses/gpl-3.0.html).

@@ -92,7 +92,7 @@ bool Sqlite::createTable(SqlTable sqlTable)
     return true;
 }
 
-bool Sqlite::addEntryAsteroid(const QVariantList &orbEntry)
+bool Sqlite::addEntryAsteroid(const struct asteroid_t &asteroid)
 {
     QSqlDatabase db = getDb();
 
@@ -141,21 +141,21 @@ bool Sqlite::addEntryAsteroid(const QVariantList &orbEntry)
 
     query.prepare(prepare);
 
-    query.bindValue(":name",         orbEntry.at(0));
-    query.bindValue(":eccentricity", orbEntry.at(1));
-    query.bindValue(":semimajor",    orbEntry.at(2));
-    query.bindValue(":inclination",  orbEntry.at(3));
-    query.bindValue(":ascending",    orbEntry.at(4));
-    query.bindValue(":perihelion",   orbEntry.at(5));
-    query.bindValue(":anomaly",      orbEntry.at(6));
-    query.bindValue(":motion",       orbEntry.at(7));
-    query.bindValue(":epoch",        orbEntry.at(8));
-    query.bindValue(":type",         orbEntry.at(9));
-    query.bindValue(":designation",  orbEntry.at(10));
-    query.bindValue(":observations", orbEntry.at(11));
-    query.bindValue(":last",         orbEntry.at(12));
-    query.bindValue(":H",            orbEntry.at(13));
-    query.bindValue(":G",            orbEntry.at(14));
+    query.bindValue(":name",         QVariant(asteroid.designation_readable));
+    query.bindValue(":eccentricity", QVariant(asteroid.eccentricity));
+    query.bindValue(":semimajor",    QVariant(asteroid.semimajor_axis));
+    query.bindValue(":inclination",  QVariant(asteroid.inclination));
+    query.bindValue(":ascending",    QVariant(asteroid.ascending_node));
+    query.bindValue(":perihelion",   QVariant(asteroid.perihelion));
+    query.bindValue(":anomaly",      QVariant(asteroid.anomaly_mean));
+    query.bindValue(":motion",       QVariant(asteroid.daily_motion));
+    query.bindValue(":epoch",        QVariant(asteroid.epoch));
+    query.bindValue(":type",         QVariant(asteroid.classification_flag));
+    query.bindValue(":designation",  QVariant(asteroid.designation));
+    query.bindValue(":observations", QVariant(asteroid.observations));
+    query.bindValue(":last",         QVariant(asteroid.last_observation));
+    query.bindValue(":H",            QVariant(asteroid.H));
+    query.bindValue(":G",            QVariant(asteroid.G));
 
     if (!query.exec()) {
         qWarning() << query.lastError().text();
@@ -167,7 +167,7 @@ bool Sqlite::addEntryAsteroid(const QVariantList &orbEntry)
     return true;
 }
 
-bool Sqlite::addEntryComet(const QVariantList &orbEntry)
+bool Sqlite::addEntryComet(const comet_t &comet)
 {
     QSqlDatabase db = getDb();
 
@@ -210,18 +210,18 @@ bool Sqlite::addEntryComet(const QVariantList &orbEntry)
 
     query.prepare(prepare);
 
-    query.bindValue(":name",                orbEntry.at(0));
-    query.bindValue(":eccentricity",        orbEntry.at(1));
-    query.bindValue(":inclination",         orbEntry.at(2));
-    query.bindValue(":ascending",           orbEntry.at(3));
-    query.bindValue(":perihelion",          orbEntry.at(4));
-    query.bindValue(":perihelion_year",     orbEntry.at(5));
-    query.bindValue(":perihelion_month",    orbEntry.at(6));
-    query.bindValue(":perihelion_day",      orbEntry.at(7));
-    query.bindValue(":perihelion_distance", orbEntry.at(8));
-    query.bindValue(":type",                orbEntry.at(9));
-    query.bindValue(":H",                   orbEntry.at(10));
-    query.bindValue(":G",                   orbEntry.at(11));
+    query.bindValue(":name",                QVariant(comet.designation_name));
+    query.bindValue(":eccentricity",        QVariant(comet.eccentricity));
+    query.bindValue(":inclination",         QVariant(comet.inclination));
+    query.bindValue(":ascending",           QVariant(comet.ascending_node));
+    query.bindValue(":perihelion",          QVariant(comet.perihelion));
+    query.bindValue(":perihelion_year",     QVariant(comet.perihelion_year));
+    query.bindValue(":perihelion_month",    QVariant(comet.perihelion_month));
+    query.bindValue(":perihelion_day",      QVariant(comet.perihelion_day));
+    query.bindValue(":perihelion_distance", QVariant(comet.perihelion_distance));
+    query.bindValue(":type",                QVariant(comet.orbit_type));
+    query.bindValue(":H",                   QVariant(comet.H));
+    query.bindValue(":G",                   QVariant(comet.G));
 
     if (!query.exec()) {
         qWarning() << query.lastError().text();

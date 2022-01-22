@@ -29,14 +29,10 @@ private:
 
     bool parseAsteroid(const QString &line, struct asteroid_t *asteroid);
     bool parseComet(const QString &line, struct comet_t *comet);
-    void appendAsteroidFields(QVariantList &variantList,
-			      const struct asteroid_t *asteroid);
-    void appendCometFields(QVariantList &variantList,
-			   const struct comet_t *comet);
 
 signals:
-    void parsedAsteroid(const QVariantList &entry);
-    void parsedComet(const QVariantList &entry);
+    void parsedAsteroid(const struct asteroid_t &asteroid);
+    void parsedComet(const struct comet_t &comet);
     void progress(qreal percent, quint32 linesProcessed);
     void finished();
 

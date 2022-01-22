@@ -195,43 +195,6 @@ bool MpcParser::parseComet(const QString &line, struct comet_t *comet)
     return true;
 }
 
-void MpcParser::appendAsteroidFields(QVariantList &variantList,
-				     const struct asteroid_t *asteroid)
-{
-    variantList.append(asteroid->designation_readable);
-    variantList.append(asteroid->eccentricity);
-    variantList.append(asteroid->semimajor_axis);
-    variantList.append(asteroid->inclination);
-    variantList.append(asteroid->ascending_node);
-    variantList.append(asteroid->perihelion);
-    variantList.append(asteroid->anomaly_mean);
-    variantList.append(asteroid->daily_motion);
-    variantList.append(asteroid->epoch);
-    variantList.append(asteroid->classification_flag);
-    variantList.append(asteroid->designation);
-    variantList.append(asteroid->observations);
-    variantList.append(asteroid->last_observation);
-    variantList.append(asteroid->H);
-    variantList.append(asteroid->G);
-}
-
-void MpcParser::appendCometFields(QVariantList &variantList,
-				  const struct comet_t *comet)
-{
-    variantList.append(comet->designation_name);
-    variantList.append(comet->eccentricity);
-    variantList.append(comet->inclination);
-    variantList.append(comet->ascending_node);
-    variantList.append(comet->perihelion);
-    variantList.append(comet->perihelion_year);
-    variantList.append(comet->perihelion_month);
-    variantList.append(comet->perihelion_day);
-    variantList.append(comet->perihelion_distance);
-    variantList.append(comet->orbit_type);
-    variantList.append(comet->H);
-    variantList.append(comet->G);
-}
-
 bool MpcParser::start()
 {
     QFile inputFile(m_filename);
@@ -253,7 +216,6 @@ bool MpcParser::start()
     struct comet_t comet;
 
     bool result;
-    QVariantList variantList;
     quint32 linesParsed = 0;
 
     while (!m_abort && textStream.readLineInto(&line)) {
@@ -263,14 +225,11 @@ bool MpcParser::start()
 	if (m_orbType == OrbType::COMET && !parseComet(line, &comet))
             continue;
 
-        variantList.clear();
         if (m_orbType == OrbType::ASTEROID) {
-	    appendAsteroidFields(variantList, &asteroid);
-	    emit parsedAsteroid(variantList);
+	    emit parsedAsteroid(asteroid);
 	}
 	if (m_orbType == OrbType::COMET) {
-	    appendCometFields(variantList, &comet);
-	    emit parsedComet(variantList);
+	    emit parsedComet(comet);
 	};
 
         auto remains = inputFile.bytesAvailable();
