@@ -37,8 +37,6 @@ bool MpcParser::parseAsteroid(const QString &line, struct asteroid_t *asteroid)
         asteroid->G = std::numeric_limits<double>::quiet_NaN();
 
     strcpy(asteroid->epoch, line.mid(20, 5).toStdString().c_str());
-    ln_get_date_from_mpc(&date, asteroid->epoch);
-    sprintf(asteroid->epoch, "%04d-%02d-%02d", date.years, date.months, date.days);
 
     asteroid->anomaly_mean = QStringView{line}.mid(26, 9).toDouble(&ok);
     CHECK_AND_RETURN(ok, QStringView{line}.mid(26, 9), line);

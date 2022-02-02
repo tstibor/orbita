@@ -7,7 +7,7 @@ struct asteroid_t {
     char	designation[8];	          /* Designation. */
     double	H;		          /* Absolute magnitude. */
     double	G;		          /* Slope parameter. */
-    char	epoch[10]; 	          /* Epoch (in form YYYY-MM-DD) */
+    char	epoch[5]; 	          /* Epoch (packet format) */
     double	anomaly_mean;	          /* Mean anomaly at the epoch, in degrees. */
     double	perihelion;	          /* Argument of perihelion, J2000.0 (degrees). */
     double	ascending_node;	          /* Longitude of the ascending node, J2000.0 (degrees). */

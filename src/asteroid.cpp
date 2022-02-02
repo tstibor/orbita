@@ -15,6 +15,8 @@ Asteroid::Asteroid(struct asteroid_t &asteroid, double JD) :
     m_orbit.omega = m_asteroid.ascending_node;
     m_orbit.w = m_asteroid.perihelion;
     m_orbit.n = m_asteroid.daily_motion;
+    m_orbit.JD = ln_get_ell_last_perihelion(ln_get_julian_from_mpc(m_asteroid.epoch),
+					    m_asteroid.anomaly_mean, m_orbit.n);
 
     updatePosition(JD);
     setPeriodDays(orbitalPeriod());
