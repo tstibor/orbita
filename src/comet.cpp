@@ -43,29 +43,9 @@ void Comet::updatePosition(double JD)
     struct ln_rect_posn pos = {.X = 0, .Y = 0, .Z = 0};
 
     setJD(JD);
-#if 0
-    ln_get_ell_helio_rect_posn(&m_ell_orbit, JD, &pos);
-    qInfo() << QString("ell pos:(%3,%4,%5)")
-	.arg(pos.X)
-	.arg(pos.Y)
-	.arg(pos.Z);
-#endif
     ln_get_par_helio_rect_posn(&m_par_orbit, JD, &pos);
-#if 0
-    qInfo() << QString("par pos:(%3,%4,%5)")
-	.arg(pos.X)
-	.arg(pos.Y)
-	.arg(pos.Z);
-#endif
-#if 0
-    ln_get_hyp_helio_rect_posn(&m_hyp_orbit, JD, &pos);
-    qInfo() << QString("hyp pos:(%3,%4,%5)")
-	.arg(pos.X)
-	.arg(pos.Y)
-	.arg(pos.Z);
-#endif
     setPosition(pos);
-    m_magnitude = 0; // ln_get_comet_mag(JD, &m_orbit, m_comet.H, m_comet.G);
+    m_magnitude = ln_get_par_comet_mag(JD, &m_par_orbit, m_comet.H, 2.5 * m_comet.G);
     m_distSun = ln_get_par_body_solar_dist(JD, &m_par_orbit);
     m_distEarth = ln_get_par_body_earth_dist(JD, &m_par_orbit);
 }
