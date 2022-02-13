@@ -33,8 +33,7 @@ Visualize [first 4 listed asteroids](http://www.stibor.net/orbita/screenshots/as
 
 ## Compile and Download
 For compiling orbita [Qt6](https://www.qt.io/download-open-source) and [libnova library](http://libnova.sourceforge.net/)
-is required. A binary executable for Windows 64 can be
-downloaded here: [orbita-0.1-win64.zip](http://www.stibor.net/orbita/windows/orbita-0.1-win64.zip)
+are required. A binary executable for Windows 64 can be downloaded here: [orbita-0.1.1-win64.zip](http://www.stibor.net/orbita/windows/orbita-0.1.1-win64.zip)
 
 ## License
 This project is licensed under the [GPL-3 license](http://www.gnu.org/licenses/gpl-3.0.html).
