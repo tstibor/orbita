@@ -29,7 +29,16 @@ include(GNUInstallDirs)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/custwidget")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/db")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/dialog")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/mpc")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/net")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/render")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/table")
 include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/test")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/util")
 
 if (WIN32)
   set(NOVA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/libnova-win64/header")
@@ -69,26 +78,26 @@ QT6_ADD_RESOURCES(${CMAKE_CURRENT_SOURCE_DIR}/src/orbita.qrc)
 set(orbita_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/mainwindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/renderwindow.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/statusbarwidget.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/celestialbody.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/planet.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/asteroid.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/comet.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/logger.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/sqlite.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/settings.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/mpcparser.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/mpctosql.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/progressdialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/tabledialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/asteroidtabledialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/comettabledialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/downloaddialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/downloadmanager.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/clickablelabel.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/orbit.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/render/renderwindow.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/custwidget/statusbarwidget.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/celestialbody.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/planet.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/solarsystem.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/asteroid.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/comet.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/util/logger.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/db/sqlite.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/util/settings.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpcparser.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpctosql.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/dialog/progressdialog.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/tabledialog.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/asteroidtabledialog.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/comettabledialog.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/dialog/downloaddialog.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/net/downloadmanager.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/custwidget/clickablelabel.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/orbit.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/orbita.qrc
 )
 
@@ -106,9 +115,9 @@ target_link_libraries(orbita
 )
 
 set(orbitatest_SRCS
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/mpcparser.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/sqlite.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/settings.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpcparser.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/db/sqlite.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/util/settings.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testsqlite.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testmpcparser.h
