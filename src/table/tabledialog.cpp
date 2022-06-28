@@ -2,8 +2,7 @@
 
 TableDialog::TableDialog(QWidget *parent, SolarSystem *solarSystem)
     : QDialog(parent), m_TableView(nullptr), m_SqlQueryModel(nullptr),
-      m_SortFilterProxyModel(nullptr), m_SolarSystem(*solarSystem),
-      m_totalObjects(0), m_OrbType(OrbType::UNKNOWN)
+      m_SolarSystem(*solarSystem), m_totalObjects(0), m_OrbType(OrbType::UNKNOWN)
 {
     m_VBoxLayout = new QVBoxLayout();
     m_TableView = new QTableView();
@@ -30,7 +29,7 @@ TableDialog::TableDialog(QWidget *parent, SolarSystem *solarSystem)
     m_TableView->installEventFilter(this);
     m_LineEdit->installEventFilter(this);
 
-    m_TableView->setSortingEnabled(true);
+    m_TableView->setSortingEnabled(false);
 
     createConnections();
 
@@ -39,10 +38,6 @@ TableDialog::TableDialog(QWidget *parent, SolarSystem *solarSystem)
 
 TableDialog::~TableDialog()
 {
-    if (m_SortFilterProxyModel) {
-	delete m_SortFilterProxyModel;
-	m_SortFilterProxyModel = nullptr;
-    }
     if (m_SqlQueryModel) {
 	delete m_SqlQueryModel;
 	m_SqlQueryModel = nullptr;
@@ -86,11 +81,6 @@ void TableDialog::showQueryInTable()
     while (m_SqlQueryModel->canFetchMore())
 	m_SqlQueryModel->fetchMore();
     m_TableView->setModel(m_SqlQueryModel);
-
-    if (m_SortFilterProxyModel == nullptr)
-	m_SortFilterProxyModel = new QSortFilterProxyModel(m_SqlQueryModel);
-    m_SortFilterProxyModel->setSourceModel(m_SqlQueryModel);
-    m_TableView->setModel(m_SortFilterProxyModel);
 
     updateWindowTitle();
 

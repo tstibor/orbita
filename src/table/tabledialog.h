@@ -11,7 +11,6 @@
 #include <QMessageBox>
 #include <QKeyEvent>
 #include <QHeaderView>
-#include <QSortFilterProxyModel>
 #include "libnova/julian_day.h"
 #include "libnova/asteroid.h"
 #include "libnova/elliptic_motion.h"
@@ -44,7 +43,6 @@ protected:
 
 private:
     QSqlQueryModel *m_SqlQueryModel;
-    QSortFilterProxyModel *m_SortFilterProxyModel;
     QVBoxLayout *m_VBoxLayout;
     QHBoxLayout *m_HBoxLayout;
     QPushButton *m_PushButtonDisplay;
