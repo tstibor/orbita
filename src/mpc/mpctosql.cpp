@@ -24,8 +24,10 @@ void MpcToSql::processFile(const QString &filename, OrbType orbType)
     progressDialog->setWindowTitle(QFileInfo { filename }.fileName());
     progressDialog->show();
 
-    connect(m_MpcParser, &MpcParser::parsedAsteroid, m_Sqlite, &Sqlite::addEntryAsteroid);
-    connect(m_MpcParser, &MpcParser::parsedComet, m_Sqlite, &Sqlite::addEntryComet);
+    connect(m_MpcParser, &MpcParser::parsedAsteroid,
+	    m_Sqlite, &Sqlite::addEntryAsteroid, Qt::BlockingQueuedConnection);
+    connect(m_MpcParser, &MpcParser::parsedComet,
+	    m_Sqlite, &Sqlite::addEntryComet, Qt::BlockingQueuedConnection);
 
     connect(m_ThreadMpcParser, &QThread::started,  m_MpcParser, &MpcParser::start);
     connect(m_MpcParser, &MpcParser::progress, progressDialog, &ProgressDialog::progress);
