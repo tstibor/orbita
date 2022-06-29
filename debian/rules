@@ -1,0 +1,14 @@
+#!/usr/bin/make -f
+
+export DEB_LDFLAGS_MAINT_APPEND := -Wl,--as-needed
+
+%:
+	dh $@ --buildsystem=cmake
+
+override_dh_auto_configure:
+	dh_auto_configure -- -DCMAKE_BUILD_TYPE=Release
+
+override_dh_auto_test:
+	:
+
+.PHONY: override_dh_auto_configure override_dh_auto_test

@@ -145,4 +145,6 @@ if (WIN32)
     COMMAND "${WINDEPLOYQT_ENV_SETUP}" && "${WINDEPLOYQT_EXECUTABLE}" \"$<TARGET_FILE:orbita>\"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${NOVA_LIBRARIES}" \"$<TARGET_FILE_DIR:orbita>\"
   )
+else ()
+  install(TARGETS orbita ${INSTALL_TARGETS_DEFAULT_ARGS})
 endif (WIN32)

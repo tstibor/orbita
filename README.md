@@ -4,7 +4,7 @@ Orbita - Simulate and visualize orbits of solar system bodies such as planets, c
 [![License](http://img.shields.io/:license-gpl3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 
 # What is Orbita
-Orbita a Qt6/OpenGL based program which renders our solar system in 3D. Positions and orbits of planets, comets and
+Orbita is a Qt6/OpenGL based program that renders our solar system in 3D. Positions and orbits of planets, comets and
 asteroids are calculated by means of [libnova library](http://libnova.sourceforge.net/).
 The [Keplerian elements](https://en.wikipedia.org/wiki/Orbital_elements#Keplerian)
 are taken from the [Minor Planet Center](https://minorplanetcenter.net/). For comets download the
