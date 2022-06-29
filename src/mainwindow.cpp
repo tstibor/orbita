@@ -511,12 +511,5 @@ void MainWindow::downloadFiles()
 	else /* Guess it is an asteroid file. */
 	    m_MpcToSql->processFile(filename, OrbType::ASTEROID);
     });
-    connect(m_MpcToSql, &MpcToSql::finished, [&](const QString &filename) {
-	bool success = QFile::remove(filename);
-	if (success)
-	    qInfo() << "successfully removed downloaded file: " << filename;
-	else
-	    qWarning() << "failed removing downloaded file: " << filename;
-    });
     downloadDialog.exec();
 }
