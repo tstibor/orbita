@@ -237,7 +237,7 @@ bool MpcParser::start()
     }
 
     inputFile.close();
-    emit finished();
+    emit finished(m_filename);
 
     return true;
 }

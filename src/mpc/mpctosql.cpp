@@ -28,17 +28,20 @@ void MpcToSql::processFile(const QString &filename, OrbType orbType)
 	    m_Sqlite, &Sqlite::addEntryAsteroid, Qt::BlockingQueuedConnection);
     connect(m_MpcParser, &MpcParser::parsedComet,
 	    m_Sqlite, &Sqlite::addEntryComet, Qt::BlockingQueuedConnection);
-
-    connect(m_ThreadMpcParser, &QThread::started,  m_MpcParser, &MpcParser::start);
     connect(m_MpcParser, &MpcParser::progress, progressDialog, &ProgressDialog::progress);
-    connect(m_MpcParser, &MpcParser::finished, progressDialog, &ProgressDialog::cancel);
+    connect(m_MpcParser, &MpcParser::finished, [&](const QString &filename) {
+	emit finished(filename);
+    });
+
+    /* Cancel signal terminates read loop in MpcParser and emit there a finish signal. */
     connect(progressDialog, &QProgressDialog::canceled, m_MpcParser, &MpcParser::abort,
             Qt::DirectConnection);
+    connect(m_ThreadMpcParser, &QThread::started,  m_MpcParser, &MpcParser::start);
 
-    connect(m_MpcParser, &MpcParser::finished,  m_MpcParser, [&] { emit finished(filename); });
+    /* Cleanup. */
+    connect(m_MpcParser, &MpcParser::finished, progressDialog, &ProgressDialog::deleteLater);
     connect(m_MpcParser, &MpcParser::finished, m_ThreadMpcParser, &QThread::quit);
-    connect(m_ThreadMpcParser, &QThread::finished, progressDialog, &ProgressDialog::deleteLater);
-    connect(m_ThreadMpcParser, &QThread::finished, m_MpcParser, &MpcParser::deleteLater);
+    connect(m_MpcParser, &MpcParser::finished, m_MpcParser, &MpcParser::deleteLater);
     connect(m_ThreadMpcParser, &QThread::finished, m_ThreadMpcParser, &QThread::deleteLater);
 
     m_MpcParser->moveToThread(m_ThreadMpcParser);

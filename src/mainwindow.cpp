@@ -214,13 +214,8 @@ void MainWindow::createActions()
     const QIcon downloadIcon = QIcon::fromTheme("emblem-downloads");
     QAction *downloadAct = new QAction(downloadIcon, tr("&Download MPC files"), this);
     downloadAct->setToolTip(tr("Download MPC files"));
-    connect(downloadAct, &QAction::triggered, [&]() {
-	QMessageBox::information(this, tr("Download MPC files"),
-				 tr("Sorry, not yet implemented.\n\n"
-				    "Download MPC files MPCORB.DAT and CometEls.txt "
-				    "from MPC website and click 'Open MPC file' "
-				    "for adding and processing."));
-    });
+    connect(downloadAct, &QAction::triggered, this, &MainWindow::downloadFiles);
+
     fileMenu->addAction(downloadAct);
     toolBar->addAction(downloadAct);
 
@@ -439,7 +434,7 @@ void MainWindow::about()
     QMessageBox::about(this, tr("About Orbita"),
 		       "<b>Orbita</b> version: " + QString(orbita_VERSION) + " build: " + QString(orbita_BUILD_TS) +
 		       "<br><br>" +
-		       "Copyright (C) 2021 Thomas Stibor thomas@stibor.net<br><br>" +
+		       "Copyright (C) 2022 Thomas Stibor thomas@stibor.net<br><br>" +
 		       "This program is free software; you can redistribute it and/or " +
 		       "modify it under the terms of the GNU General Public License " +
 		       "as published by the Free Software Foundation; either version 3 " +
@@ -516,16 +511,12 @@ void MainWindow::downloadFiles()
 	else /* Guess it is an asteroid file. */
 	    m_MpcToSql->processFile(filename, OrbType::ASTEROID);
     });
-
-    connect(m_MpcToSql, &MpcToSql::finished, this, [&](const QString &filename) {
+    connect(m_MpcToSql, &MpcToSql::finished, [&](const QString &filename) {
 	bool success = QFile::remove(filename);
 	if (success)
 	    qInfo() << "successfully removed downloaded file: " << filename;
 	else
 	    qWarning() << "failed removing downloaded file: " << filename;
     });
-
     downloadDialog.exec();
-
-
 }

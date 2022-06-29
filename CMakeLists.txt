@@ -5,7 +5,7 @@ string(TIMESTAMP orbita_BUILD_TS UTC)
 
 set(orbita_VERSION_MAJOR 0)
 set(orbita_VERSION_MINOR 1)
-set(orbita_VERSION_PATCH 1)
+set(orbita_VERSION_PATCH 2)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -43,7 +43,7 @@ include_directories("${CMAKE_CURRENT_SOURCE_DIR}/src/util")
 if (WIN32)
   set(NOVA_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/libnova-win64/header")
   set(NOVA_LIBRARIES "${CMAKE_CURRENT_SOURCE_DIR}/3rd-party/libnova-win64/dll/libnova-0-16-0.dll")
-endif(WIN32)
+endif (WIN32)
 
 find_package(Nova REQUIRED)
 find_package(Qt6 6.2 REQUIRED COMPONENTS Core Gui Widgets Network OpenGLWidgets Sql Test)
@@ -54,13 +54,13 @@ if (OPENMP_FOUND)
   set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
   set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
   set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
-endif(OPENMP_FOUND)
+endif (OPENMP_FOUND)
 
 if (Qt6_FOUND)
   message(STATUS "Qt6 library version ${Qt6_VERSION} found")
-endif(Qt6_FOUND)
+endif (Qt6_FOUND)
 
-if(NOVA_FOUND)
+if (NOVA_FOUND)
   include_directories(${NOVA_INCLUDE_DIR})
 endif(NOVA_FOUND)
 
@@ -70,7 +70,7 @@ if (WIN32)
 
   find_program(WINDEPLOYQT_ENV_SETUP qtenv2.bat HINTS "${QT_BIN_DIR}")
   find_program(WINDEPLOYQT_EXECUTABLE windeployqt HINTS "${QT_BIN_DIR}")
-endif(WIN32)
+endif (WIN32)
 
 
 QT6_ADD_RESOURCES(${CMAKE_CURRENT_SOURCE_DIR}/src/orbita.qrc)
@@ -144,5 +144,5 @@ if (WIN32)
     POST_BUILD
     COMMAND "${WINDEPLOYQT_ENV_SETUP}" && "${WINDEPLOYQT_EXECUTABLE}" \"$<TARGET_FILE:orbita>\"
     COMMAND ${CMAKE_COMMAND} -E copy_if_different "${NOVA_LIBRARIES}" \"$<TARGET_FILE_DIR:orbita>\"
-    )
-endif(WIN32)
+  )
+endif (WIN32)

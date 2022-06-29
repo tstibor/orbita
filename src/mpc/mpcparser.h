@@ -34,7 +34,7 @@ signals:
     void parsedAsteroid(const struct asteroid_t &asteroid);
     void parsedComet(const struct comet_t &comet);
     void progress(qreal percent, quint32 linesProcessed);
-    void finished();
+    void finished(const QString &filename);
 
 public slots:
     void abort();
