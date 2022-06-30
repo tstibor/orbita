@@ -48,6 +48,7 @@ endif (WIN32)
 find_package(Nova REQUIRED)
 find_package(Qt6 6.2 REQUIRED COMPONENTS Core Gui Widgets Network OpenGLWidgets Sql Test)
 find_package(OpenGL REQUIRED)
+find_package(ZLIB)
 
 find_package(OpenMP)
 if (OPENMP_FOUND)
@@ -63,6 +64,11 @@ endif (Qt6_FOUND)
 if (NOVA_FOUND)
   include_directories(${NOVA_INCLUDE_DIR})
 endif(NOVA_FOUND)
+
+if (ZLIB_FOUND)
+  message(STATUS "zlib libary version ${ZLIB_VERSION_STRING} found")
+  include_directories(${ZLIB_INCLUDE_DIRS})
+endif (ZLIB_FOUND)
 
 if (WIN32)
   get_target_property(QMAKE_EXE Qt6::qmake IMPORTED_LOCATION)
@@ -86,6 +92,7 @@ set(orbita_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/asteroid.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/solarsystem/comet.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/util/logger.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/util/decompress.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/db/sqlite.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/util/settings.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpcparser.cpp
@@ -106,6 +113,7 @@ add_executable(orbita ${orbita_SRCS})
 target_link_libraries(orbita
   ${NOVA_LIBRARIES}
   ${OPENGL_LIBRARIES}
+  ${ZLIB_LIBRARIES}
   Qt6::Core
   Qt6::Gui
   Qt6::Widgets
@@ -118,9 +126,11 @@ set(orbitatest_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpcparser.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/db/sqlite.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/util/settings.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/util/decompress.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test/main.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testsqlite.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testmpcparser.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/test/testdecompressgzip.h
   ${CMAKE_CURRENT_SOURCE_DIR}/src/orbita.qrc
 )
 
@@ -130,6 +140,7 @@ add_test(NAME orbitatest COMMAND orbitatest)
 target_link_libraries(orbitatest PRIVATE
   ${NOVA_LIBRARIES}
   ${OPENGL_LIBRARIES}
+  ${ZLIB_LIBRARIES}
   Qt6::Core
   Qt6::Gui
   Qt6::Widgets

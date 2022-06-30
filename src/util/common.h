@@ -9,7 +9,7 @@
 #define ONE_AU_IN_METER 149597870700.0
 #define ONE_METER_IN_AU (1.0 / 149597870700.0)
 
-#define DEFAULT_DOWNLOAD_MPCORB_DAT_GZ_URL "https://www.minorplanetcenter.net/iau/MPCORB/MPCORB.DAT"
+#define DEFAULT_DOWNLOAD_MPCORB_DAT_GZ_URL "https://www.minorplanetcenter.net/iau/MPCORB/MPCORB.DAT.gz"
 #define DEFAULT_DOWNLOAD_COMET_ELS_URL "https://www.minorplanetcenter.net/iau/MPCORB/CometEls.txt"
 
 static QString JdToQStringDate(double jd)

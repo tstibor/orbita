@@ -7,6 +7,7 @@
   </qresource>
   <qresource prefix="/res/test/">
     <file alias="MPCORB.DAT">../res/test/MPCORB.DAT</file>
+    <file alias="MPCORB.DAT.gz">../res/test/MPCORB.DAT.gz</file>
     <file alias="CometEls.txt">../res/test/CometEls.txt</file>
   </qresource>
 </RCC>
