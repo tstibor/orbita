@@ -12,6 +12,18 @@
 #define DEFAULT_DOWNLOAD_MPCORB_DAT_GZ_URL "https://www.minorplanetcenter.net/iau/MPCORB/MPCORB.DAT.gz"
 #define DEFAULT_DOWNLOAD_COMET_ELS_URL "https://www.minorplanetcenter.net/iau/MPCORB/CometEls.txt"
 
+template<class T> void SAFE_DELETE(T*& p)
+{
+    delete p;
+    p = nullptr;
+}
+
+template<class T> void SAFE_DELETE_ARRAY(T*& p)
+{
+    delete[] p;
+    p = nullptr;
+}
+
 static QString JdToQStringDate(double jd)
 {
     struct ln_date date;

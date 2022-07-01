@@ -5,9 +5,11 @@
 #include <QFile>
 #include <QTextStream>
 #include <QVariantList>
-#include <QDebug>
+#include <QFileInfo>
 #include <libnova/julian_day.h>
 #include "types.h"
+#include "common.h"
+#include "decompress.h"
 
 #define MPCORB_HEADER_SIZE 2349
 
@@ -26,7 +28,11 @@ private:
     QString m_filename;
     bool m_abort;
     OrbType m_orbType;
+    QTextStream *m_textStream;
+    QFile *m_file;
 
+    bool isFileCompressed();
+    quint64 fileAsTextStream();
     bool parseAsteroid(const QString &line, struct asteroid_t *asteroid);
     bool parseComet(const QString &line, struct comet_t *comet);
 

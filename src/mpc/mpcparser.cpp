@@ -8,9 +8,14 @@ if (!b) {                                                                       
 }
 
 MpcParser::MpcParser(QString filename, OrbType orbType)
-    : m_filename(filename), m_orbType(orbType), m_abort(false) { }
+    : m_filename(filename), m_orbType(orbType),
+      m_abort(false), m_file(nullptr), m_textStream(nullptr) { }
 
-MpcParser::~MpcParser() { }
+MpcParser::~MpcParser()
+{
+    SAFE_DELETE(m_textStream);
+    SAFE_DELETE(m_file);
+}
 
 void MpcParser::abort()
 {
@@ -193,30 +198,82 @@ bool MpcParser::parseComet(const QString &line, struct comet_t *comet)
     return true;
 }
 
+bool MpcParser::isFileCompressed()
+{
+    return QFileInfo(m_filename.toUpper()).suffix() == "GZ";
+}
+
+quint64 MpcParser::fileAsTextStream()
+{
+    quint64 sizeFileData = 0;
+
+    if (m_file == nullptr)
+	m_file = new QFile(m_filename);
+
+    if (isFileCompressed())
+        m_file->open(QIODevice::ReadOnly);
+    else
+	m_file->open(QIODevice::ReadOnly | QIODevice::Text);
+
+    if (!m_file->isOpen())
+        return 0;
+
+    QByteArray outDecompressed;
+    QByteArray inCompressed;
+
+    if (isFileCompressed()) {
+
+	inCompressed = m_file->readAll();
+	int rc = decompressGzip(outDecompressed, inCompressed);
+
+	if (rc) {
+	    m_file->close();
+	    return 0;
+	}
+
+	sizeFileData = outDecompressed.size();
+
+	/* Skip header (size 2349) bytes when MPCORB.DAT. */
+	if (m_orbType == OrbType::ASTEROID && sizeFileData > MPCORB_HEADER_SIZE) {
+	    outDecompressed.remove(0, MPCORB_HEADER_SIZE);
+	    sizeFileData = outDecompressed.size();
+	}
+    } else { /* Uncompressed file. */
+	sizeFileData = m_file->size();
+
+        if (m_orbType == OrbType::ASTEROID && sizeFileData > MPCORB_HEADER_SIZE) {
+	    m_file->seek(MPCORB_HEADER_SIZE);
+	    sizeFileData -= MPCORB_HEADER_SIZE;
+	}
+    }
+
+    if (m_textStream == nullptr) {
+	if (isFileCompressed())
+	    m_textStream = new QTextStream(outDecompressed);
+	else
+	    m_textStream = new QTextStream(m_file);
+    }
+
+    return sizeFileData;
+}
+
 bool MpcParser::start()
 {
-    QFile inputFile(m_filename);
-
-    inputFile.open(QIODevice::ReadOnly | QIODevice::Text);
-    if (!inputFile.isOpen())
-        return false;
-
-    const auto sizeFile = inputFile.size();
-
-    /* Skip header (size 2349) bytes when MPCORB.DAT. */
-    if (m_orbType == OrbType::ASTEROID && sizeFile > MPCORB_HEADER_SIZE)
-	inputFile.seek(MPCORB_HEADER_SIZE);
-
-    QTextStream textStream(&inputFile);
     QString line;
 
     struct asteroid_t asteroid;
     struct comet_t comet;
 
-    bool result;
     quint32 linesParsed = 0;
+    quint64 sizeFileData, remains;
 
-    while (!m_abort && textStream.readLineInto(&line)) {
+    sizeFileData = fileAsTextStream();
+    if (sizeFileData == 0)
+	return false;
+
+    remains = sizeFileData;
+
+    while (!m_abort && m_textStream->readLineInto(&line)) {
 
 	if (m_orbType == OrbType::ASTEROID && !parseAsteroid(line, &asteroid))
             continue;
@@ -230,13 +287,13 @@ bool MpcParser::start()
 	    emit parsedComet(comet);
 	};
 
-        auto remains = inputFile.bytesAvailable();
-        auto progress_ = ((sizeFile - remains) * 100.0) / sizeFile;
+        remains -= line.length();
+        auto progress_ = ((sizeFileData - remains) * 100.0) / sizeFileData;
 
         emit progress(progress_, ++linesParsed);
     }
 
-    inputFile.close();
+    m_file->close();
     emit finished(m_filename);
 
     return true;
