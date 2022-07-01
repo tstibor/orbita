@@ -480,7 +480,7 @@ void MainWindow::writeSettings()
 void MainWindow::openFile()
 {
     QFileDialog fileDialog(this, tr("Open MPC file"), QString(),
-                           "MPCORB (*.DAT);; CometEls (*.txt);; All files (*.*)");
+                           "MPCORB (*.DAT *.gz);;CometEls (*.txt);;All files (*.*)");
     QStringList fileNames;
 
     if (QDialog::Accepted == fileDialog.exec()) {
