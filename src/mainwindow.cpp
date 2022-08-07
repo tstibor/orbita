@@ -181,8 +181,10 @@ void MainWindow::connectActions()
 
     connect(m_DateTimeEdit, &QDateTimeEdit::dateTimeChanged, this, [&](const QDateTime &DateTime) {
 	double JD = DateTimeToJD(DateTime);
-	m_SolarSystem->setJD(JD);
-	updateDateTimeEdit(JD);
+	if (JD != m_SolarSystem->JD()) {
+	    m_SolarSystem->setJD(JD);
+	    updateDateTimeEdit(JD);
+	}
     });
 
     connect(m_ClickableLabelAsteroid, &ClickableLabel::clicked, [&]() {
