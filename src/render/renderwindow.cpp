@@ -408,18 +408,14 @@ void RenderWindow::renderComets()
 
 void RenderWindow::renderPlanetsOrbit()
 {
+    glColor3d(lightBlackColor, lightBlackColor, lightBlackColor);
+    glLineWidth(1.25);
+
     for (const auto &planet : m_SolarSystem.planets()) {
-
-        glPushMatrix();
-        glLineWidth(1.25);
         glBegin(GL_LINE_LOOP);
-
-        glColor3d(lightBlackColor, lightBlackColor, lightBlackColor);
         for (const auto &orbit : planet.orbit())
             glVertex3f(orbit.X, orbit.Y, orbit.Z);
-
         glEnd();
-        glPopMatrix();
     }
 }
 
@@ -428,18 +424,14 @@ void RenderWindow::renderAsteroidsOrbit()
     if (!(m_renderSettingAsteroid & RENDER_SETTING_ORBIT))
 	return;
 
+    glColor3d(grayColor, grayColor, grayColor);
+    glLineWidth(1.25);
+
     for (const auto &asteroid : m_SolarSystem.asteroids()) {
-
-        glPushMatrix();
-        glLineWidth(1.25);
         glBegin(GL_LINE_LOOP);
-
-        glColor3d(grayColor, grayColor, grayColor);
         for (const auto &orbit : asteroid.orbit())
             glVertex3f(orbit.X, orbit.Y, orbit.Z);
-
         glEnd();
-        glPopMatrix();
     }
 }
 
@@ -448,18 +440,14 @@ void RenderWindow::renderCometsOrbit()
     if (!(m_renderSettingComet & RENDER_SETTING_ORBIT))
 	return;
 
+    glColor3d(grayColor, grayColor, grayColor);
+    glLineWidth(1.25);
+
     for (const auto &comet : m_SolarSystem.comets()) {
-
-        glPushMatrix();
-        glLineWidth(1.25);
         glBegin(GL_LINE_STRIP);
-
-        glColor3d(grayColor, grayColor, grayColor);
         for (const auto &orbit : comet.orbit())
             glVertex3f(orbit.X, orbit.Y, orbit.Z);
-
         glEnd();
-        glPopMatrix();
     }
 }
 
