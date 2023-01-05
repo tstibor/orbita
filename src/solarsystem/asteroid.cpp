@@ -37,7 +37,7 @@ void Asteroid::updatePosition(double JD)
 void Asteroid::updateOrbit()
 {
     struct ln_rect_posn pos = {.X = 0, .Y = 0, .Z = 0};
-    const double stepsJD = periodDays() / 100.0;
+    const double stepsJD = qLn(periodDays()) / qLn(10);
 
     for (auto jd = JD(); jd <= JD() + periodDays(); jd += stepsJD) {
 	ln_get_ell_helio_rect_posn(&m_orbit, jd, &pos);
