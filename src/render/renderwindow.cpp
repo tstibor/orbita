@@ -60,8 +60,8 @@ void RenderWindow::resetView()
     m_xRot = m_yRot = m_zRot = 0;
     m_xTrans = m_yTrans = .0;
     m_zTrans = -7.5;
-    m_zFar = 1000.0;
-    m_zNear = -50.0;
+    m_zFar = 5000.0;
+    m_zNear = -500.0;
     m_radiusFactorPlanetsSun = 50 * 40.0;
     m_radiusFactorAsteroid = 50 * 75000.0;
     m_orthographic = true;
