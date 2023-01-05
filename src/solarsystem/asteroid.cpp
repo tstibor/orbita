@@ -47,7 +47,8 @@ void Asteroid::updateOrbit()
 
 double Asteroid::orbitalPeriod()
 {
-    return 365.0 * pow(m_orbit.a, 1.5);
+    /* Kepler's 3rd law gives orbital period. */
+    return daysOneYear * pow(m_orbit.a, 1.5);
 }
 
 double Asteroid::magnitude() const

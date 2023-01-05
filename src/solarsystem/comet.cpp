@@ -80,5 +80,5 @@ double Comet::distSun() const
 
 double Comet::orbitLengthJd()
 {
-    return 365.25 * 25.0; /* 25 years. */
+    return daysOneYear * 25.0; /* 25 years. */
 }

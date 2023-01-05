@@ -4,6 +4,8 @@
 #include <QVector>
 #include <libnova/ln_types.h>
 
+constexpr double daysOneYear = 365.2568984;
+
 class Orbit
 {
 
