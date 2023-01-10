@@ -37,11 +37,30 @@ void Asteroid::updatePosition(double JD)
 void Asteroid::updateOrbit()
 {
     struct ln_rect_posn pos = {.X = 0, .Y = 0, .Z = 0};
-    const double stepsJD = qLn(periodDays()) / qLn(10);
+    const double pvel = ln_get_ell_orbit_pvel(&m_orbit);
+    const double avel = ln_get_ell_orbit_avel(&m_orbit);
+    const double lenAu = ln_get_ell_orbit_len(&m_orbit);
+    double stepsJd = 1;
+    double jd = JD();
 
-    for (auto jd = JD(); jd <= JD() + periodDays(); jd += stepsJD) {
-	ln_get_ell_helio_rect_posn(&m_orbit, jd, &pos);
+    while (jd <= JD() + periodDays()) {
+	const double vel = ln_get_ell_orbit_vel(jd, &m_orbit);
+
+	if (lenAu < 12.5)
+	    stepsJd = 1.5;
+	else {
+	    const auto diff_pvel = qAbs(vel - pvel);
+	    const auto diff_avel = qAbs(vel - avel);
+	    /* Move towards perihel. */
+	    if (diff_pvel < diff_avel)
+		stepsJd = qAbs(qLn(diff_pvel / (1 / qPow(lenAu, 10))));
+	    else
+		stepsJd = qAbs(qLn(diff_avel / (1 / qPow(lenAu, 10))));
+	}
+
+        ln_get_ell_helio_rect_posn(&m_orbit, jd, &pos);
 	addPositionOrbit(pos);
+	jd += stepsJd;
     }
 }
 
