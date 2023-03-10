@@ -47,7 +47,7 @@ void Logger::messageHandler(QtMsgType type, const QMessageLogContext &context, c
 
     switch(type) {
     case QtDebugMsg:
-	text.append("DEBUG ").append(QString("%1:%2↷%3")
+	text.append("DEBUG ").append(QString("%1:%2 ⇨ %3")
 				     .arg(QFileInfo(context.file).baseName())
 				     .arg(context.line)
 				     .arg(context.function)).append("] ");

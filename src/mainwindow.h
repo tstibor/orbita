@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QDateTimeEdit>
+#include "mpctabledialog.h"
 #include "solarsystem.h"
 #include "renderwindow.h"
 #include "statusbarwidget.h"
@@ -24,9 +25,6 @@
 #include "mpcparser.h"
 #include "mpctosql.h"
 #include "progressdialog.h"
-#include "tabledialog.h"
-#include "asteroidtabledialog.h"
-#include "comettabledialog.h"
 #include "downloaddialog.h"
 #include "clickablelabel.h"
 #include "version.h"
@@ -55,8 +53,7 @@ private:
     RenderWindow *m_RenderWindow = nullptr;
     StatusbarWidget *m_StatusbarWidget = nullptr;
     SolarSystem *m_SolarSystem = nullptr;
-    AsteroidTableDialog *m_AsteroidTableDialog = nullptr;
-    CometTableDialog *m_CometTableDialog = nullptr;
+    MpcTableDialog *m_MpcTableDialog = nullptr;
     MpcToSql *m_MpcToSql = nullptr;
 
     QDateTimeEdit *m_DateTimeEdit = nullptr;

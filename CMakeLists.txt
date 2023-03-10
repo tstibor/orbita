@@ -91,9 +91,8 @@ set(orbita_SRCS
   ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpcparser.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/mpc/mpctosql.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/dialog/progressdialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/tabledialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/asteroidtabledialog.cpp
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/comettabledialog.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/mpctableview.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/table/mpctabledialog.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/dialog/downloaddialog.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/net/downloadmanager.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/src/custwidget/clickablelabel.cpp

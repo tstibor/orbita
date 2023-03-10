@@ -26,8 +26,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
     m_SolarSystem = new SolarSystem();
     m_RenderWindow = new RenderWindow(this, m_SolarSystem);
-    m_AsteroidTableDialog = new AsteroidTableDialog(this, m_SolarSystem);
-    m_CometTableDialog = new CometTableDialog(this, m_SolarSystem);
+    m_MpcTableDialog = new MpcTableDialog(this, m_SolarSystem);
     m_MpcToSql = new MpcToSql(this);
 
     QSurfaceFormat SurfaceFormat;
@@ -46,18 +45,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 
 MainWindow::~MainWindow()
 {
-    if (m_SolarSystem)
-        delete m_SolarSystem;
-    if (m_StatusbarWidget)
-        delete m_StatusbarWidget;
-    if (m_RenderWindow)
-        delete m_RenderWindow;
-    if (m_AsteroidTableDialog)
-	delete m_AsteroidTableDialog;
-    if (m_CometTableDialog)
-	delete m_CometTableDialog;
-    if (m_MpcToSql)
-	delete m_MpcToSql;
+    SAFE_DELETE(m_SolarSystem);
+    SAFE_DELETE(m_StatusbarWidget);
+    SAFE_DELETE(m_RenderWindow);
+    SAFE_DELETE(m_MpcTableDialog);
+    SAFE_DELETE(m_MpcToSql);
 }
 
 void MainWindow::updateJD(double &JD, TimeDirection direction)
@@ -93,20 +85,20 @@ void MainWindow::connectActions()
     connect(m_SolarSystem, &SolarSystem::planetsPositionChanged, m_StatusbarWidget,
             &StatusbarWidget::updateDate);
 
-    connect(m_AsteroidTableDialog, &AsteroidTableDialog::selectedAsteroid, [&](struct asteroid_t &asteroid) {
+    connect(m_MpcTableDialog, &MpcTableDialog::selectedAsteroid, [&](struct asteroid_t &asteroid) {
 	Asteroid a(asteroid, m_SolarSystem->JD());
 	m_SolarSystem->addAsteroid(a);
     });
-    connect(m_AsteroidTableDialog, &AsteroidTableDialog::displaySelectedAsteroids, [&]() {
+    connect(m_MpcTableDialog, &MpcTableDialog::displaySelectedAsteroids, [&]() {
 	m_SolarSystem->computeAsteroidsOrbit();
 	emit m_SolarSystem->asteroidsPositionChanged(m_SolarSystem->JD());
     });
 
-    connect(m_CometTableDialog, &CometTableDialog::selectedComet, [&](struct comet_t &comet) {
+    connect(m_MpcTableDialog, &MpcTableDialog::selectedComet, [&](struct comet_t &comet) {
 	Comet c(comet, m_SolarSystem->JD());
 	m_SolarSystem->addComet(c);
     });
-    connect(m_CometTableDialog, &CometTableDialog::displaySelectedComets, [&]() {
+    connect(m_MpcTableDialog, &MpcTableDialog::displaySelectedComets, [&]() {
 	m_SolarSystem->computeCometsOrbit();
 	emit m_SolarSystem->cometsPositionChanged(m_SolarSystem->JD());
     });
@@ -188,11 +180,11 @@ void MainWindow::connectActions()
     });
 
     connect(m_ClickableLabelAsteroid, &ClickableLabel::clicked, [&]() {
-	m_AsteroidTableDialog->showQueryInTable();
+	m_MpcTableDialog->openAndShow();
     });
 
     connect(m_ClickableLabelComet, &ClickableLabel::clicked, [&]() {
-	m_CometTableDialog->showQueryInTable();
+	m_MpcTableDialog->openAndShow();
     });
 }
 
@@ -222,17 +214,12 @@ void MainWindow::createActions()
     toolBar->addAction(downloadAct);
 
     /* Tables. */
-    QMenu *tableMenu = menuBar()->addMenu(tr("&Table"));
+    QMenu *tableMenu = menuBar()->addMenu(tr("&Tables"));
 
-    QAction *tableAsteroid = tableMenu->addAction(tr("&Asteroids"), m_AsteroidTableDialog, [&] {
-	m_AsteroidTableDialog->showQueryInTable();
+    QAction *tableMpc = tableMenu->addAction(tr("&MPC"), m_MpcTableDialog, [&] {
+	m_MpcTableDialog->openAndShow();
     });
-    tableAsteroid->setToolTip(tr("Show asteroid table"));
-
-    QAction *tableComet = tableMenu->addAction(tr("&Comets"), m_CometTableDialog, [&] {
-	m_CometTableDialog->showQueryInTable();
-    });
-    tableComet->setToolTip(tr("Show comet table"));
+    tableMpc->setToolTip(tr("Show MPC tables (asteroids, comets, near earth objects, etc..)"));
 
     /* Menu View. */
     QMenu *viewMenu = menuBar()->addMenu(tr("&View"));
@@ -367,7 +354,7 @@ void MainWindow::createActions()
 
     m_ClickableLabelAsteroid = new ClickableLabel(this);
     m_ClickableLabelAsteroid->setPixmap(QPixmap(":/res/icons/asteroid.png"));
-    m_ClickableLabelAsteroid->setToolTip(tableAsteroid->toolTip());
+    //m_ClickableLabelAsteroid->setToolTip(tableAsteroid->toolTip());
 
     m_ComboBoxRenderSettings = new QComboBox(this);
     m_ComboBoxRenderSettings->setFocusPolicy(Qt::NoFocus);
@@ -387,7 +374,7 @@ void MainWindow::createActions()
 
     m_ClickableLabelComet = new ClickableLabel(this);
     m_ClickableLabelComet->setPixmap(QPixmap(":/res/icons/comet.png"));
-    m_ClickableLabelComet->setToolTip(tableComet->toolTip());
+    //m_ClickableLabelComet->setToolTip(tableComet->toolTip());
 
     m_CheckBoxAsteroid = new QCheckBox(this);
     m_CheckBoxAsteroid->setToolTip(tr("Set asteroid render settings"));
