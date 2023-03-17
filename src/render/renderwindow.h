@@ -11,12 +11,12 @@
 #include "solarsystem.h"
 #include "common.h"
 
-enum RENDER_SETTING {
-    RENDER_SETTING_ORBIT = 0x1,
-    RENDER_SETTING_NAME  = 0x2,
-    RENDER_SETTING_DATE  = 0x4,
-    RENDER_SETTING_MAG   = 0x8,
-    RENDER_SETTING_DIST  = 0x10,
+enum RENDER_OPTIONS : quint16 {
+    RENDER_ORBIT = 0x1,
+    RENDER_NAME  = 0x2,
+    RENDER_DATE  = 0x4,
+    RENDER_MAG   = 0x8,
+    RENDER_DIST  = 0x10,
 };
 
 class RenderWindow : public QOpenGLWidget

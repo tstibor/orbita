@@ -11,19 +11,20 @@
 #include <QLineEdit>
 #include <QMessageBox>
 #include <QKeyEvent>
+#include <QCheckBox>
 #include "solarsystem.h"
 #include "sqlite.h"
 #include "settings.h"
 #include "mpctableview.h"
-
-enum class MpcTable { MPC_ASTEROIDS = 0, MPC_COMETS = 1 };
+#include "renderwindow.h"
 
 class MpcTableDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit MpcTableDialog(QWidget *parent = nullptr, SolarSystem *solarSystem = nullptr);
+    explicit MpcTableDialog(QWidget *parent = nullptr,
+			    SolarSystem *solarSystem = nullptr);
 
 protected:
     void setSqlCmdQuery(const QString &sqlCmdQuery) { m_SqlCmdQuery = sqlCmdQuery; }
@@ -39,25 +40,34 @@ private:
     MpcTableView *m_TableViewComets = nullptr;
 
     QVBoxLayout *m_VBoxLayout = nullptr;
-    QHBoxLayout *m_HBoxLayout = nullptr;
     QHBoxLayout *m_HBoxLayoutQueryCmd = nullptr;
     QPushButton *m_PushButtonDisplay = nullptr;
     QPushButton *m_PushButtonClear = nullptr;
-    QPushButton *m_PushButtonExecQuery = nullptr;
+    QGridLayout *m_GridLayoutSettings = nullptr;
+    QLabel *m_LabelDisplayOptions = nullptr;
+    QCheckBox *m_CheckBoxOrbit = nullptr;
+    QCheckBox *m_CheckBoxName = nullptr;
+    QCheckBox *m_CheckBoxDate = nullptr;
+    QCheckBox *m_CheckBoxMag = nullptr;
+    QCheckBox *m_CheckBoxDist = nullptr;
+
     QLabel *m_LabelQueryCmd = nullptr;
     QLineEdit *m_LineEdit = nullptr;
+
+    quint16 m_DisplayOptions[2] = { 0, 0 };
 
     QString m_SqlCmdQuery;
 
     void connectSignalsToSlots();
-    void prepareQueryForTable(MpcTable table);
+    void prepareQueryForTable(MpcType type);
     void prepareOpen();
     void renderSelectedAsteroids();
     void renderSelectedComets();
+    void updateCheckBoxes(int index);
+    void switchOptions(int state, quint16 optionBit);
 
 private slots:
     void updateWindowTitle(quint32 selected, quint32 total);
-    void clickedButtonExecQuery();
 
 public slots:
     void queryResultsToTableView();
@@ -68,7 +78,7 @@ signals:
     void queryStarted();
     void queryFinished();
     void selectedAsteroid(struct asteroid_t &asteroid);
-    void displaySelectedAsteroids();
     void selectedComet(struct comet_t &comet);
-    void displaySelectedComets();
+    void displaySelection(MpcType type);
+    void updateDisplayOptions(quint16 optionBit, MpcType type);
 };

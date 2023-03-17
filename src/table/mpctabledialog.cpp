@@ -6,8 +6,8 @@ MpcTableDialog::MpcTableDialog(QWidget *parent, SolarSystem *solarSystem)
     setWindowTitle(tr("Minor Planet Center Objects"));
 
     m_TabWidget = new QTabWidget;
-    m_TableViewAsteroids = new MpcTableView(QUERY_ASTEROID, CelestialType::ASTEROID);
-    m_TableViewComets = new MpcTableView(QUERY_COMET, CelestialType::COMET);
+    m_TableViewAsteroids = new MpcTableView(QUERY_ASTEROID, MpcType::ASTEROID);
+    m_TableViewComets = new MpcTableView(QUERY_COMET, MpcType::COMET);
 
     m_TableViewAsteroids->setSizeAdjustPolicy(QTableView::AdjustToContents);
     m_TableViewAsteroids->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -28,38 +28,76 @@ MpcTableDialog::MpcTableDialog(QWidget *parent, SolarSystem *solarSystem)
     m_TableViewComets->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     m_VBoxLayout = new QVBoxLayout;
-    m_HBoxLayout = new QHBoxLayout;
     m_HBoxLayoutQueryCmd = new QHBoxLayout;
+    m_GridLayoutSettings = new QGridLayout;
 
     m_PushButtonDisplay = new QPushButton(tr("Display"));
     m_PushButtonClear = new QPushButton(tr("Clear"));
-    m_PushButtonExecQuery = new QPushButton(tr("Execute query"));
-    m_LabelQueryCmd = new QLabel(tr("SQL query command"));
+    m_LabelQueryCmd = new QLabel(tr("SQL query"));
     m_LineEdit = new QLineEdit(this);
     m_LineEdit->installEventFilter(this);
 
-    m_HBoxLayout->addWidget(m_PushButtonDisplay);
-    m_HBoxLayout->addWidget(m_PushButtonClear);
-    m_HBoxLayout->addWidget(m_PushButtonExecQuery);
+    m_LabelDisplayOptions = new QLabel(tr("with options:"));
+    m_CheckBoxOrbit = new QCheckBox(tr("Orbit"));
+    m_CheckBoxOrbit->setToolTip(tr("Draw orbit"));
+    m_CheckBoxName = new QCheckBox(tr("Name"));
+    m_CheckBoxName->setToolTip(tr("Show designation name"));
+    m_CheckBoxDate = new QCheckBox(tr("Date"));
+    m_CheckBoxDate->setToolTip(tr("Show date"));
+    m_CheckBoxMag = new QCheckBox(tr("Magnitude"));
+    m_CheckBoxMag->setToolTip(tr("Show magnitude for current date"));
+    m_CheckBoxDist = new QCheckBox(tr("Distance"));
+    m_CheckBoxDist->setToolTip(tr("Show distance to sun and earth for current date"));
+
+    m_GridLayoutSettings->addWidget(m_PushButtonDisplay, 0, 0, 1, 2);
+    m_GridLayoutSettings->addWidget(m_LabelDisplayOptions, 0, 2);
+    m_GridLayoutSettings->addWidget(m_CheckBoxOrbit, 0, 3);
+    m_GridLayoutSettings->addWidget(m_CheckBoxName, 0, 4);
+    m_GridLayoutSettings->addWidget(m_CheckBoxDate, 0, 5);
+    m_GridLayoutSettings->addWidget(m_CheckBoxMag, 0, 6);
+    m_GridLayoutSettings->addWidget(m_CheckBoxDist, 0, 7);
+    m_GridLayoutSettings->addLayout(new QHBoxLayout, 0, 8, 1, 8);
+    m_GridLayoutSettings->addWidget(m_PushButtonClear, 0, 15, 1, 2);
 
     m_VBoxLayout->addWidget(m_TabWidget);
-    m_VBoxLayout->addLayout(m_HBoxLayout);
 
     m_HBoxLayoutQueryCmd->addWidget(m_LabelQueryCmd);
     m_HBoxLayoutQueryCmd->addWidget(m_LineEdit);
     m_VBoxLayout->addLayout(m_HBoxLayoutQueryCmd);
+    m_VBoxLayout->addLayout(m_GridLayoutSettings);
 
     setLayout(m_VBoxLayout);
 
     connectSignalsToSlots();
 }
 
+void MpcTableDialog::switchOptions(int state, quint16 optionBit)
+{
+    MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
+    if (!TableView)
+	return;
+
+    if (state)
+	m_DisplayOptions[TableView->celestialType()] |= optionBit;
+    else
+	m_DisplayOptions[TableView->celestialType()] &= ~optionBit;
+
+    emit updateDisplayOptions(m_DisplayOptions[TableView->celestialType()], TableView->celestialType());
+}
+
 void MpcTableDialog::connectSignalsToSlots()
 {
-    connect(m_TabWidget, &QTabWidget::currentChanged, [=, this](int index) { prepareOpen(); });
-    connect(m_PushButtonExecQuery, &QPushButton::clicked, this, &MpcTableDialog::clickedButtonExecQuery);
+    connect(m_TabWidget, &QTabWidget::currentChanged, [=, this](int index) {
+	updateCheckBoxes(index);
+	prepareOpen();
+    });
     connect(m_PushButtonDisplay, &QPushButton::clicked, [=, this] { renderSelectedAsteroids(); renderSelectedComets(); });
     connect(this, &MpcTableDialog::numberRows, this, &MpcTableDialog::updateWindowTitle);
+    connect(m_CheckBoxOrbit, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_ORBIT); });
+    connect(m_CheckBoxName, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_NAME); });
+    connect(m_CheckBoxDate, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DATE); });
+    connect(m_CheckBoxMag, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_MAG); });
+    connect(m_CheckBoxDist, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DIST); });
 }
 
 void MpcTableDialog::queryResultsToTableView()
@@ -118,11 +156,11 @@ void MpcTableDialog::updateWindowTitle(quint32 numSelectedObjects, quint32 numTo
 		   + QString::number(numTotalObjects));
 }
 
-void MpcTableDialog::prepareQueryForTable(MpcTable table)
+void MpcTableDialog::prepareQueryForTable(MpcType type)
 {
-    if (table == MpcTable::MPC_ASTEROIDS) {
+    if (type == MpcType::ASTEROID) {
 	setSqlCmdQuery(QUERY_ASTEROID);
-    } else if (table == MpcTable::MPC_COMETS) {
+    } else if (type == MpcType::COMET) {
 	setSqlCmdQuery(QUERY_COMET);
     }
 }
@@ -138,17 +176,12 @@ bool MpcTableDialog::eventFilter(QObject *object, QEvent *event)
 
         QKeyEvent *keyEvent = dynamic_cast<QKeyEvent *>(event);
 	if (keyEvent->key() == Qt::Key_Return) {
-	    clickedButtonExecQuery();
+	    m_SqlCmdQuery = m_LineEdit->text();
+	    queryResultsToTableView();
 	}
     }
 
     return QObject::eventFilter(object, event);
-}
-
-void MpcTableDialog::clickedButtonExecQuery()
-{
-    m_SqlCmdQuery = m_LineEdit->text();
-    queryResultsToTableView();
 }
 
 void MpcTableDialog::closeEvent(QCloseEvent *event)
@@ -167,10 +200,10 @@ void MpcTableDialog::prepareOpen()
     MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
     if (TableView->model() == nullptr) {
 	if (m_TabWidget->currentIndex() == 0) {
-	    prepareQueryForTable(MpcTable::MPC_ASTEROIDS);
+	    prepareQueryForTable(MpcType::ASTEROID);
 	    m_LineEdit->setText(QUERY_ASTEROID);
 	} else if (m_TabWidget->currentIndex() == 1) {
-	    prepareQueryForTable(MpcTable::MPC_COMETS);
+	    prepareQueryForTable(MpcType::COMET);
 	    m_LineEdit->setText(QUERY_COMET);
 	}
 	queryResultsToTableView();
@@ -189,7 +222,7 @@ void MpcTableDialog::prepareOpen()
 void MpcTableDialog::renderSelectedAsteroids()
 {
     MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
-    if (!TableView || TableView->celestialType() != CelestialType::ASTEROID) {
+    if (!TableView || TableView->celestialType() != MpcType::ASTEROID) {
 	return;
     }
 
@@ -226,14 +259,14 @@ void MpcTableDialog::renderSelectedAsteroids()
 
 	    emit selectedAsteroid(asteroid);
 	}
-	emit displaySelectedAsteroids();
+	emit displaySelection(MpcType::ASTEROID);
     }
 }
 
 void MpcTableDialog::renderSelectedComets()
 {
     MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
-    if (!TableView || TableView->celestialType() != CelestialType::COMET) {
+    if (!TableView || TableView->celestialType() != MpcType::COMET) {
 	return;
     }
 
@@ -265,6 +298,15 @@ void MpcTableDialog::renderSelectedComets()
 
 	    emit selectedComet(comet);
 	}
-	emit displaySelectedComets();
+	emit displaySelection(MpcType::COMET);
     }
+}
+
+void MpcTableDialog::updateCheckBoxes(int index)
+{
+    m_CheckBoxOrbit->setChecked(m_DisplayOptions[index] & RENDER_ORBIT);
+    m_CheckBoxName->setChecked(m_DisplayOptions[index] & RENDER_NAME);
+    m_CheckBoxDate->setChecked(m_DisplayOptions[index] & RENDER_DATE);
+    m_CheckBoxMag->setChecked(m_DisplayOptions[index] & RENDER_MAG);
+    m_CheckBoxDist->setChecked(m_DisplayOptions[index] & RENDER_DIST);
 }

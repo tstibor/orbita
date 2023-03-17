@@ -29,7 +29,7 @@
 #include "clickablelabel.h"
 #include "version.h"
 
-enum class TimeDirection {INCREMENT, DECREMENT};
+enum class TimeDirection { INCREMENT, DECREMENT };
 
 class MainWindow : public QMainWindow
 {
@@ -61,18 +61,9 @@ private:
     QPushButton *m_PushButtonDecrTime = nullptr;
     QSpinBox *m_SpinBoxIncrDecrTime = nullptr;
     QComboBox *m_ComboBoxIncrDecrTime = nullptr;
-    QSlider *m_SliderRadiusAsteroids = nullptr;
     QLabel *m_LabelPlanet = nullptr;
     QCheckBox *m_CheckBoxRadiusPlanetsSun = nullptr;
     QSlider *m_SliderRadiusPlanetsSun = nullptr;
-    QComboBox *m_ComboBoxRenderSettings = nullptr;
-    QStandardItemModel *m_StandardItemModel = nullptr;
-    QList<quint8> m_QListComboBoxRows;
-    quint16 m_ComboBoxRowBits = 0;
-    ClickableLabel *m_ClickableLabelComet = nullptr;
-    ClickableLabel *m_ClickableLabelAsteroid = nullptr;
-    QCheckBox *m_CheckBoxAsteroid = nullptr;
-    QCheckBox *m_CheckBoxComet = nullptr;
 
     void openFile();
     void downloadFiles();

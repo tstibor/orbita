@@ -1,20 +1,6 @@
 #include "mainwindow.h"
-
-static const QStringList RENDER_SETTINGS_STR_FIELDS = {
-    "Orbit",
-    "Name",
-    "Date",
-    "Magitude",
-    "Distances"
-};
-
-static const QStringList RENDER_SETTINGS_TOOLTIP_FIELDS = {
-    "Draw orbit",
-    "Show designation name",
-    "Show date at current position",
-    "Show magnitude",
-    "Show distance to sun and earth"
-};
+#include "mpctabledialog.h"
+#include "mpctableview.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
@@ -84,74 +70,44 @@ void MainWindow::connectActions()
 {
     connect(m_SolarSystem, &SolarSystem::planetsPositionChanged, m_StatusbarWidget,
             &StatusbarWidget::updateDate);
-
     connect(m_MpcTableDialog, &MpcTableDialog::selectedAsteroid, [&](struct asteroid_t &asteroid) {
 	Asteroid a(asteroid, m_SolarSystem->JD());
 	m_SolarSystem->addAsteroid(a);
     });
-    connect(m_MpcTableDialog, &MpcTableDialog::displaySelectedAsteroids, [&]() {
-	m_SolarSystem->computeAsteroidsOrbit();
-	emit m_SolarSystem->asteroidsPositionChanged(m_SolarSystem->JD());
+    connect(m_MpcTableDialog, &MpcTableDialog::displaySelection, [&](MpcType type) {
+	if (type == MpcType::ASTEROID) {
+	    m_SolarSystem->computeAsteroidsOrbit();
+	    emit m_SolarSystem->asteroidsPositionChanged(m_SolarSystem->JD());
+	} else if (type == MpcType::COMET) {
+	    m_SolarSystem->computeCometsOrbit();
+	    emit m_SolarSystem->cometsPositionChanged(m_SolarSystem->JD());
+	}
+    });
+    connect(m_MpcTableDialog, &MpcTableDialog::updateDisplayOptions, [=, this](quint16 DisplayOptionBits, MpcType type) {
+	if (type == MpcType::ASTEROID)
+	    emit updateRenderSettingAsteroid(DisplayOptionBits);
+	else if (type == MpcType::COMET)
+	    emit updateRenderSettingComet(DisplayOptionBits);
     });
 
     connect(m_MpcTableDialog, &MpcTableDialog::selectedComet, [&](struct comet_t &comet) {
 	Comet c(comet, m_SolarSystem->JD());
 	m_SolarSystem->addComet(c);
     });
-    connect(m_MpcTableDialog, &MpcTableDialog::displaySelectedComets, [&]() {
-	m_SolarSystem->computeCometsOrbit();
-	emit m_SolarSystem->cometsPositionChanged(m_SolarSystem->JD());
-    });
-
     connect(m_RenderWindow, &RenderWindow::projectionChanged, m_StatusbarWidget,
             &StatusbarWidget::updateProjection);
-
     connect(m_PushButtonIncrTime, &QPushButton::pressed, m_SolarSystem, [&]() {
 	double JD = m_SolarSystem->JD();
 	updateJD(JD, TimeDirection::INCREMENT);
 	m_SolarSystem->setJD(JD);
 	updateDateTimeEdit(JD);
     });
-
     connect(m_PushButtonDecrTime, &QPushButton::pressed, m_SolarSystem, [&]() {
 	double JD = m_SolarSystem->JD();
 	updateJD(JD, TimeDirection::DECREMENT);
 	m_SolarSystem->setJD(JD);
 	updateDateTimeEdit(JD);
     });
-
-    connect(m_CheckBoxAsteroid, &QCheckBox::stateChanged, [&](int state) {
-	if (state == Qt::Checked)
-	    emit updateRenderSettingAsteroid(m_ComboBoxRowBits);
-
-	m_ComboBoxRenderSettings->setEnabled(m_CheckBoxAsteroid->isChecked()
-					     | m_CheckBoxComet->isChecked());
-    });
-    connect(m_CheckBoxComet, &QCheckBox::stateChanged, [&](int state) {
-	if (state == Qt::Checked)
-	    emit updateRenderSettingComet(m_ComboBoxRowBits);
-
-	m_ComboBoxRenderSettings->setEnabled(m_CheckBoxAsteroid->isChecked()
-					     | m_CheckBoxComet->isChecked());
-    });
-
-    connect(m_SliderRadiusAsteroids, &QSlider::valueChanged, m_RenderWindow, &RenderWindow::setRadiusFactorAsteroids);
-    connect(m_ComboBoxRenderSettings->model(), &QAbstractItemModel::dataChanged,
-	    [&](const QModelIndex &ModelIndex) {
-		const quint8 row = ModelIndex.row();
-
-		if (m_QListComboBoxRows.contains(row)) {
-		    m_QListComboBoxRows.removeOne(row);
-		    m_ComboBoxRowBits &= ~(row == 0 ? (row + 1) : (1 << row));
-		} else {
-		    m_QListComboBoxRows.append(row);
-		    m_ComboBoxRowBits |= (row == 0 ? (row + 1) : (1 << row));
-		}
-		if (m_CheckBoxAsteroid->isChecked())
-		    emit updateRenderSettingAsteroid(m_ComboBoxRowBits);
-		if (m_CheckBoxComet->isChecked())
-		    emit updateRenderSettingComet(m_ComboBoxRowBits);
-	    });
 
     connect(m_SliderRadiusPlanetsSun, &QSlider::valueChanged, m_RenderWindow, &RenderWindow::setRadiusFactorPlanetsSun);
     connect(m_CheckBoxRadiusPlanetsSun, &QCheckBox::stateChanged, m_RenderWindow, &RenderWindow::setRadiusSamePlanetsSun);
@@ -160,15 +116,8 @@ void MainWindow::connectActions()
 
     connect(m_RenderWindow, &RenderWindow::resetViewChanged, this, [&] {
         m_SliderRadiusPlanetsSun->setValue(50);
-	m_SliderRadiusAsteroids->setValue(50);
 	m_RenderWindow->setRadiusFactorPlanetsSun(m_SliderRadiusPlanetsSun->value());
-	m_RenderWindow->setRadiusFactorAsteroids(m_SliderRadiusAsteroids->value());
 	m_CheckBoxRadiusPlanetsSun->setCheckState(Qt::Checked);
-
-	for (auto r = 0; r < RENDER_SETTINGS_STR_FIELDS.count(); ++r) {
-	    QStandardItem *item = m_StandardItemModel->item(r);
-	    item->setData(Qt::Unchecked, Qt::CheckStateRole);
-	}
     });
 
     connect(m_DateTimeEdit, &QDateTimeEdit::dateTimeChanged, this, [&](const QDateTime &DateTime) {
@@ -177,14 +126,6 @@ void MainWindow::connectActions()
 	    m_SolarSystem->setJD(JD);
 	    updateDateTimeEdit(JD);
 	}
-    });
-
-    connect(m_ClickableLabelAsteroid, &ClickableLabel::clicked, [&]() {
-	m_MpcTableDialog->openAndShow();
-    });
-
-    connect(m_ClickableLabelComet, &ClickableLabel::clicked, [&]() {
-	m_MpcTableDialog->openAndShow();
     });
 }
 
@@ -324,16 +265,6 @@ void MainWindow::createActions()
     m_ComboBoxIncrDecrTime->setToolTip(tr("Time units"));
     m_ComboBoxIncrDecrTime->setFocusPolicy(Qt::NoFocus);
 
-    m_SliderRadiusAsteroids = new QSlider(this);
-    m_SliderRadiusAsteroids->setOrientation(Qt::Horizontal);
-    m_SliderRadiusAsteroids->setMinimum(1);
-    m_SliderRadiusAsteroids->setMaximum(100);
-    m_SliderRadiusAsteroids->setValue(50);
-    m_RenderWindow->setRadiusFactorAsteroids(m_SliderRadiusAsteroids->value());
-    m_SliderRadiusAsteroids->setMaximumWidth(100);
-    m_SliderRadiusAsteroids->setToolTip(tr("Increase/decrease radius of asteroids and comets"));
-    m_SliderRadiusAsteroids->setFocusPolicy(Qt::NoFocus);
-
     m_LabelPlanet = new QLabel(this);
     m_LabelPlanet->setPixmap(QPixmap(":/res/icons/planets.png"));
 
@@ -352,46 +283,9 @@ void MainWindow::createActions()
     m_SliderRadiusPlanetsSun->setToolTip(tr("Increase/decrease radius of planets and sun"));
     m_SliderRadiusPlanetsSun->setFocusPolicy(Qt::NoFocus);
 
-    m_ClickableLabelAsteroid = new ClickableLabel(this);
-    m_ClickableLabelAsteroid->setPixmap(QPixmap(":/res/icons/asteroid.png"));
-    //m_ClickableLabelAsteroid->setToolTip(tableAsteroid->toolTip());
-
-    m_ComboBoxRenderSettings = new QComboBox(this);
-    m_ComboBoxRenderSettings->setFocusPolicy(Qt::NoFocus);
-    m_StandardItemModel = new QStandardItemModel(this);
-
-    for (qsizetype i = 0; i < RENDER_SETTINGS_STR_FIELDS.count(); ++i) {
-	QStandardItem *item = new QStandardItem(RENDER_SETTINGS_STR_FIELDS[i]);
-	item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
-        item->setData(Qt::Unchecked, Qt::CheckStateRole);
-	item->setToolTip(RENDER_SETTINGS_TOOLTIP_FIELDS[i]);
-	m_StandardItemModel->setItem(i, 0, item);
-    }
-
-    m_ComboBoxRenderSettings->setModel(m_StandardItemModel);
-    m_ComboBoxRenderSettings->setMinimumContentsLength(10);
-    m_ComboBoxRenderSettings->setDisabled(true);
-
-    m_ClickableLabelComet = new ClickableLabel(this);
-    m_ClickableLabelComet->setPixmap(QPixmap(":/res/icons/comet.png"));
-    //m_ClickableLabelComet->setToolTip(tableComet->toolTip());
-
-    m_CheckBoxAsteroid = new QCheckBox(this);
-    m_CheckBoxAsteroid->setToolTip(tr("Set asteroid render settings"));
-    m_CheckBoxComet = new QCheckBox(this);
-    m_CheckBoxComet->setToolTip(tr("Set comet render settings"));
-
     QWidget* widgetSpacer = new QWidget(this);
     widgetSpacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     toolBar->addWidget(widgetSpacer);
-
-    toolBar->addWidget(m_ClickableLabelComet);
-    toolBar->addWidget(m_CheckBoxComet);
-
-    toolBar->addWidget(m_ClickableLabelAsteroid);
-    toolBar->addWidget(m_CheckBoxAsteroid);
-    toolBar->addWidget(m_ComboBoxRenderSettings);
-    toolBar->addWidget(m_SliderRadiusAsteroids);
 
     toolBar->addWidget(m_LabelPlanet);
     toolBar->addWidget(m_CheckBoxRadiusPlanetsSun);

@@ -1,6 +1,6 @@
 #include "mpctableview.h"
 
-MpcTableView::MpcTableView(QString cmd, CelestialType celestialType)
+MpcTableView::MpcTableView(QString cmd, MpcType celestialType)
 {
     m_CelestialType = celestialType;
     setSqlQueryCmd(cmd);

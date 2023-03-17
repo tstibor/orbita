@@ -1,9 +1,9 @@
 #include "renderwindow.h"
 
-constexpr GLdouble lightGrayColor  = 220 / 255.0;
-constexpr GLdouble darkGrayColor   = 150 / 255.0;
-constexpr GLdouble grayColor       = 185 / 255.0;
-constexpr GLdouble lightBlackColor = 105 / 255.0;
+constexpr GLdouble lightGrayColor  { 220 / 255.0 };
+constexpr GLdouble darkGrayColor   { 150 / 255.0 };
+constexpr GLdouble grayColor       { 185 / 255.0 };
+constexpr GLdouble lightBlackColor { 105 / 255.0 };
 
 RenderWindow::RenderWindow(QWidget *parent, SolarSystem *solarSystem)
     : QOpenGLWidget(parent), m_SolarSystem(*solarSystem)
@@ -357,16 +357,16 @@ void RenderWindow::renderAsteroids()
 
 	QString renderString = "";
 
-	if (m_renderSettingAsteroid & RENDER_SETTING_NAME)
+	if (m_renderSettingAsteroid & RENDER_NAME)
 	    renderString = asteroid.name();
 
-	if (m_renderSettingAsteroid & RENDER_SETTING_DATE)
+	if (m_renderSettingAsteroid & RENDER_DATE)
 	    renderString += " " + JdToQStringDate(asteroid.JD());
 
-	if (m_renderSettingAsteroid & RENDER_SETTING_MAG)
+	if (m_renderSettingAsteroid & RENDER_MAG)
 	    renderString += " " + QString::number(asteroid.magnitude(), 'f', 2);
 
-	if (m_renderSettingAsteroid & RENDER_SETTING_DIST)
+	if (m_renderSettingAsteroid & RENDER_DIST)
 	    renderString += " " + QString::number(asteroid.distEarth(), 'f', 2) + " "
 		+ QString::number(asteroid.distSun(), 'f', 2);
 
@@ -389,16 +389,16 @@ void RenderWindow::renderComets()
 
 	QString renderString = "";
 
-	if (m_renderSettingComet & RENDER_SETTING_NAME)
+	if (m_renderSettingComet & RENDER_NAME)
 	    renderString = comet.name();
 
-	if (m_renderSettingComet & RENDER_SETTING_DATE)
+	if (m_renderSettingComet & RENDER_DATE)
 	    renderString += " " + JdToQStringDate(comet.JD());
 
-	if (m_renderSettingComet & RENDER_SETTING_MAG)
+	if (m_renderSettingComet & RENDER_MAG)
 	    renderString += " " + QString::number(comet.magnitude(), 'f', 2);
 
-	if (m_renderSettingComet & RENDER_SETTING_DIST)
+	if (m_renderSettingComet & RENDER_DIST)
 	    renderString += " " + QString::number(comet.distEarth(), 'f', 2) + " "
 		+ QString::number(comet.distSun(), 'f', 2);
 
@@ -421,7 +421,7 @@ void RenderWindow::renderPlanetsOrbit()
 
 void RenderWindow::renderAsteroidsOrbit()
 {
-    if (!(m_renderSettingAsteroid & RENDER_SETTING_ORBIT))
+    if (!(m_renderSettingAsteroid & RENDER_ORBIT))
 	return;
 
     glColor3d(grayColor, grayColor, grayColor);
@@ -437,7 +437,7 @@ void RenderWindow::renderAsteroidsOrbit()
 
 void RenderWindow::renderCometsOrbit()
 {
-    if (!(m_renderSettingComet & RENDER_SETTING_ORBIT))
+    if (!(m_renderSettingComet & RENDER_ORBIT))
 	return;
 
     glColor3d(grayColor, grayColor, grayColor);

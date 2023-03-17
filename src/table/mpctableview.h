@@ -4,23 +4,23 @@
 #include <QSqlQueryModel>
 #include "common.h"
 
-enum class CelestialType { ASTEROID, COMET, NEO };
+enum MpcType : quint8 { ASTEROID = 0, COMET = 1, NEO = 2};
 
 class MpcTableView : public QTableView
 {
     Q_OBJECT
 
 public:
-    explicit MpcTableView(QString cmd, CelestialType celestialType);
+    explicit MpcTableView(QString cmd, MpcType celestialType);
     ~MpcTableView();
 
     QSqlQueryModel *attachedSqlQueryModel();
     void setSqlQueryCmd(QString cmd) { m_SqlQueryCmd = cmd; };
     const QString SqlQueryCmd() { return m_SqlQueryCmd; };
-    const CelestialType celestialType() { return m_CelestialType; };
+    const MpcType celestialType() { return m_CelestialType; };
 
 private:
     QSqlQueryModel *m_SqlQueryModel;
     QString m_SqlQueryCmd;
-    CelestialType m_CelestialType;
+    MpcType m_CelestialType;
 };
