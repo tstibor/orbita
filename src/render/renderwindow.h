@@ -1,5 +1,4 @@
-#ifndef RENDERWINDOW_H
-#define RENDERWINDOW_H
+#pragma once
 
 #include <QOpenGLWidget>
 #include <QMouseEvent>
@@ -43,6 +42,7 @@ public slots:
     void setRadiusFactorPlanetsSun(int value);
     void setRadiusSamePlanetsSun(int value);
     void setRadiusFactorAsteroids(int value);
+    void setRadiusFactorComets(int value);
     void renderSettingAsteroid(quint16 fields);
     void renderSettingComet(quint16 fields);
 
@@ -58,6 +58,7 @@ signals:
     void resetViewChanged();
     void radiusFactorPlanetsSunChanged();
     void radiusFactorAsteroidsChanged();
+    void radiusFactorCometsChanged();
     void renderSettingAsteroidChanged();
     void renderSettingCometChanged();
 
@@ -78,6 +79,7 @@ private:
     float m_zTrans;
     float m_radiusFactorPlanetsSun;
     float m_radiusFactorAsteroid;
+    float m_radiusFactorComet;
     float m_zFar;
     float m_zNear;
     QPoint m_lastPos;
@@ -108,5 +110,3 @@ private:
 			 const GLdouble model[16], const GLdouble proj[16], const GLint viewport[4],
 			 GLdouble *winx, GLdouble *winy, GLdouble *winz);
 };
-
-#endif // RENDERWINDOW_H

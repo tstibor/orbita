@@ -26,6 +26,7 @@ void RenderWindow::connectActions()
 
     connect(this, &RenderWindow::radiusFactorPlanetsSunChanged, this, [&]() { update(); });
     connect(this, &RenderWindow::radiusFactorAsteroidsChanged, this, [&]() { update(); });
+    connect(this, &RenderWindow::radiusFactorCometsChanged, this, [&]() { update(); });
     connect(this, &RenderWindow::renderSettingAsteroidChanged, this, [&]() { update(); });
     connect(this, &RenderWindow::renderSettingCometChanged, this, [&]() { update(); });
 
@@ -64,6 +65,7 @@ void RenderWindow::resetView()
     m_zNear = -500.0;
     m_radiusFactorPlanetsSun = 50 * 40.0;
     m_radiusFactorAsteroid = 50 * 75000.0;
+    m_radiusFactorComet = 50 * 75000.0;
     m_orthographic = true;
     m_sameRadiusPlanetsSun = true;
     m_renderSettingAsteroid = 0;
@@ -106,6 +108,13 @@ void RenderWindow::setRadiusFactorAsteroids(int value)
     m_radiusFactorAsteroid = value * 75000.0;
 
     emit radiusFactorAsteroidsChanged();
+}
+
+void RenderWindow::setRadiusFactorComets(int value)
+{
+    m_radiusFactorComet = value * 75000.0;
+
+    emit radiusFactorCometsChanged();
 }
 
 void RenderWindow::renderSettingAsteroid(quint16 fields)
@@ -378,7 +387,7 @@ void RenderWindow::renderComets()
 {
     constexpr double radiusMeter = 2000; // Assume average comet has radius of 2000 meters.
     constexpr double radiusAU = radiusMeter / ONE_AU_IN_METER;
-    const double radiusScaledAU = m_radiusFactorAsteroid * radiusAU;
+    const double radiusScaledAU = m_radiusFactorComet * radiusAU;
     constexpr QColor color(153, 204, 255);
 
     for (const auto &comet : m_SolarSystem.comets()) {

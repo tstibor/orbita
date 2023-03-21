@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-#include "mpctabledialog.h"
 #include "mpctableview.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
@@ -114,7 +113,15 @@ void MainWindow::connectActions()
     connect(this, &MainWindow::updateRenderSettingAsteroid, m_RenderWindow, &RenderWindow::renderSettingAsteroid);
     connect(this, &MainWindow::updateRenderSettingComet, m_RenderWindow, &RenderWindow::renderSettingComet);
 
+    connect(m_MpcTableDialog, &MpcTableDialog::updateSliderValue, [=, this](int value, MpcType type) {
+	if (type == MpcType::ASTEROID)
+	    m_RenderWindow->setRadiusFactorAsteroids(value);
+	else if (type == MpcType::COMET)
+	    m_RenderWindow->setRadiusFactorComets(value);
+    });
+
     connect(m_RenderWindow, &RenderWindow::resetViewChanged, this, [&] {
+	/* TODO: Reset slider radius value for asteroids and comets. */
         m_SliderRadiusPlanetsSun->setValue(50);
 	m_RenderWindow->setRadiusFactorPlanetsSun(m_SliderRadiusPlanetsSun->value());
 	m_CheckBoxRadiusPlanetsSun->setCheckState(Qt::Checked);

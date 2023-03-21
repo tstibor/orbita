@@ -49,6 +49,13 @@ MpcTableDialog::MpcTableDialog(QWidget *parent, SolarSystem *solarSystem)
     m_CheckBoxDist = new QCheckBox(tr("Distance"));
     m_CheckBoxDist->setToolTip(tr("Show distance to sun and earth for current date"));
 
+    m_LabelSlider = new QLabel(tr("Radius"));
+    m_SliderRadius = new QSlider(Qt::Orientation::Horizontal);
+    m_SliderRadius->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    m_SliderRadius->setMinimum(1);
+    m_SliderRadius->setMaximum(100);
+    m_SliderRadius->setValue(m_sliderValue[0]);
+
     m_GridLayoutSettings->addWidget(m_PushButtonDisplay, 0, 0, 1, 2);
     m_GridLayoutSettings->addWidget(m_LabelDisplayOptions, 0, 2);
     m_GridLayoutSettings->addWidget(m_CheckBoxOrbit, 0, 3);
@@ -56,7 +63,9 @@ MpcTableDialog::MpcTableDialog(QWidget *parent, SolarSystem *solarSystem)
     m_GridLayoutSettings->addWidget(m_CheckBoxDate, 0, 5);
     m_GridLayoutSettings->addWidget(m_CheckBoxMag, 0, 6);
     m_GridLayoutSettings->addWidget(m_CheckBoxDist, 0, 7);
-    m_GridLayoutSettings->addLayout(new QHBoxLayout, 0, 8, 1, 8);
+    m_GridLayoutSettings->addWidget(m_LabelSlider, 0, 8, Qt::AlignRight);
+    m_GridLayoutSettings->addWidget(m_SliderRadius, 0, 9, Qt::AlignLeft);
+    m_GridLayoutSettings->addLayout(new QHBoxLayout, 0, 10, 1, 4);
     m_GridLayoutSettings->addWidget(m_PushButtonClear, 0, 15, 1, 2);
 
     m_VBoxLayout->addWidget(m_TabWidget);
@@ -71,6 +80,17 @@ MpcTableDialog::MpcTableDialog(QWidget *parent, SolarSystem *solarSystem)
     connectSignalsToSlots();
 }
 
+void MpcTableDialog::switchSliderValue(int value)
+{
+    MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
+    if (!TableView)
+	return;
+
+    m_sliderValue[TableView->celestialType()] = m_SliderRadius->value();
+
+    emit updateSliderValue(m_sliderValue[TableView->celestialType()], TableView->celestialType());
+}
+
 void MpcTableDialog::switchOptions(int state, quint16 optionBit)
 {
     MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
@@ -78,17 +98,18 @@ void MpcTableDialog::switchOptions(int state, quint16 optionBit)
 	return;
 
     if (state)
-	m_DisplayOptions[TableView->celestialType()] |= optionBit;
+	m_displayOptions[TableView->celestialType()] |= optionBit;
     else
-	m_DisplayOptions[TableView->celestialType()] &= ~optionBit;
+	m_displayOptions[TableView->celestialType()] &= ~optionBit;
 
-    emit updateDisplayOptions(m_DisplayOptions[TableView->celestialType()], TableView->celestialType());
+    emit updateDisplayOptions(m_displayOptions[TableView->celestialType()], TableView->celestialType());
 }
 
 void MpcTableDialog::connectSignalsToSlots()
 {
     connect(m_TabWidget, &QTabWidget::currentChanged, [=, this](int index) {
 	updateCheckBoxes(index);
+	updateSlider();
 	prepareOpen();
     });
     connect(m_PushButtonDisplay, &QPushButton::clicked, [=, this] { renderSelectedAsteroids(); renderSelectedComets(); });
@@ -98,6 +119,7 @@ void MpcTableDialog::connectSignalsToSlots()
     connect(m_CheckBoxDate, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DATE); });
     connect(m_CheckBoxMag, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_MAG); });
     connect(m_CheckBoxDist, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DIST); });
+    connect(m_SliderRadius, &QSlider::valueChanged, this, &MpcTableDialog::switchSliderValue);
 }
 
 void MpcTableDialog::queryResultsToTableView()
@@ -304,9 +326,18 @@ void MpcTableDialog::renderSelectedComets()
 
 void MpcTableDialog::updateCheckBoxes(int index)
 {
-    m_CheckBoxOrbit->setChecked(m_DisplayOptions[index] & RENDER_ORBIT);
-    m_CheckBoxName->setChecked(m_DisplayOptions[index] & RENDER_NAME);
-    m_CheckBoxDate->setChecked(m_DisplayOptions[index] & RENDER_DATE);
-    m_CheckBoxMag->setChecked(m_DisplayOptions[index] & RENDER_MAG);
-    m_CheckBoxDist->setChecked(m_DisplayOptions[index] & RENDER_DIST);
+    m_CheckBoxOrbit->setChecked(m_displayOptions[index] & RENDER_ORBIT);
+    m_CheckBoxName->setChecked(m_displayOptions[index] & RENDER_NAME);
+    m_CheckBoxDate->setChecked(m_displayOptions[index] & RENDER_DATE);
+    m_CheckBoxMag->setChecked(m_displayOptions[index] & RENDER_MAG);
+    m_CheckBoxDist->setChecked(m_displayOptions[index] & RENDER_DIST);
+}
+
+void MpcTableDialog::updateSlider()
+{
+    MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
+    if (!TableView)
+	return;
+
+    m_SliderRadius->setValue(m_sliderValue[TableView->celestialType()]);
 }
