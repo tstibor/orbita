@@ -113,6 +113,14 @@ void MpcTableDialog::connectSignalsToSlots()
 	prepareOpen();
     });
     connect(m_PushButtonDisplay, &QPushButton::clicked, [=, this] { renderSelectedAsteroids(); renderSelectedComets(); });
+    connect(m_PushButtonClear, &QPushButton::clicked, [=, this]() {
+	MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
+	if (!TableView)
+	    return;
+        TableView->clearSelection();
+	renderSelectedAsteroids();
+	renderSelectedComets();
+    });
     connect(this, &MpcTableDialog::numberRows, this, &MpcTableDialog::updateWindowTitle);
     connect(m_CheckBoxOrbit, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_ORBIT); });
     connect(m_CheckBoxName, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_NAME); });
