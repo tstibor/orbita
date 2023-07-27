@@ -36,6 +36,7 @@ MpcTableDialog::MpcTableDialog(QWidget *parent, SolarSystem *solarSystem)
     m_LabelQueryCmd = new QLabel(tr("SQL query"));
     m_LineEdit = new QLineEdit(this);
     m_LineEdit->installEventFilter(this);
+    m_LineEdit->setContextMenuPolicy(Qt::CustomContextMenu);
 
     m_LabelDisplayOptions = new QLabel(tr("with options:"));
     m_CheckBoxOrbit = new QCheckBox(tr("Orbit"));
@@ -128,6 +129,58 @@ void MpcTableDialog::connectSignalsToSlots()
     connect(m_CheckBoxMag, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_MAG); });
     connect(m_CheckBoxDist, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DIST); });
     connect(m_SliderRadius, &QSlider::valueChanged, this, &MpcTableDialog::switchSliderValue);
+    connect(m_LineEdit, &QLineEdit::customContextMenuRequested, [=, this](const QPoint &pos) {
+	MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
+	if (!TableView)
+	    return;
+        QMenu menu;
+
+	if (TableView->celestialType() == MpcType::ASTEROID) {
+	    menu.addAction(tr("Default query"), [&] {
+		m_LineEdit->setText(QUERY_ASTEROID);
+	    });
+	    menu.addSeparator();
+#if 0
+	    menu.addAction(tr("Inner Solar System: Atiras"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = XX");
+	    });
+	    menu.addAction(tr("Inner Solar System: Atens"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = XX");
+	    });
+	    menu.addAction(tr("Inner Solar System: Apollos"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = XX");
+	    });
+	    menu.addAction(tr("Inner Solar System: Amors"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = XX");
+	    });
+            menu.addAction(tr("Near Mars Objects: Hungarias"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = 6");
+	    });
+	    menu.addAction(tr("Near Mars Objects: Mars-crossers"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = 5");
+	    });
+	    menu.addSeparator();
+#endif
+	    menu.addAction(tr("Mid Solar System: Jupiter Trojans"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = 9");
+	    });
+	    menu.addAction(tr("Mid Solar System: Hildas"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = 8");
+	    });
+	    menu.addAction(tr("Mid Solar System: Main-belt"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = 0");
+	    });
+	    menu.addSeparator();
+            menu.addAction(tr("Outer Solar System: Distant Objects"), [&] {
+		m_LineEdit->setText(QString(QUERY_ASTEROID) + " " + "WHERE type = 10");
+	    });
+	} else if (TableView->celestialType() == MpcType::COMET) {
+	    menu.addAction(tr("Default query"), [&] {
+		m_LineEdit->setText(QUERY_COMET);
+	    });
+	}
+	menu.exec(m_LineEdit->mapToGlobal(pos));
+    });
 }
 
 void MpcTableDialog::queryResultsToTableView()
