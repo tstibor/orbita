@@ -1,5 +1,5 @@
-project(orbita CXX)
 cmake_minimum_required(VERSION 3.16)
+project(orbita CXX)
 
 string(TIMESTAMP orbita_BUILD_TS UTC)
 
