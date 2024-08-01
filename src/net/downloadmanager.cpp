@@ -45,6 +45,15 @@ void DownloadManager::startNextDownload()
     connect(m_NetworkReply, &QNetworkReply::finished, this, &DownloadManager::downloadFinished);
     connect(m_NetworkReply, &QNetworkReply::readyRead, this, &DownloadManager::downloadReadyRead);
     connect(m_NetworkReply, &QNetworkReply::downloadProgress, this, &DownloadManager::downloadProgress);
+    connect(&m_NetworkAccessManager, &QNetworkAccessManager::sslErrors,
+            [](QNetworkReply* reply, const QList<QSslError> &errors)
+    {
+        Q_UNUSED(reply);
+        for (const QSslError &error : errors)
+            qWarning() << "SSL Error:" << error.errorString();
+        /* Ignore SSL errors, usually don't do that! */
+        reply->ignoreSslErrors();
+    });
 
     m_ElapsedTimer.start();
 }
