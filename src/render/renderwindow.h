@@ -1,12 +1,18 @@
 #pragma once
 
+#ifdef __APPLE__
+#include <OpenGL/glu.h>
+#else
+#include <GL/glu.h>
+#endif
+
 #include <QOpenGLWidget>
 #include <QMouseEvent>
 #include <QWheelEvent>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QtMath>
-#include <GL/glu.h>
+
 #include "solarsystem.h"
 #include "common.h"
 
