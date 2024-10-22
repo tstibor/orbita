@@ -99,12 +99,13 @@ bool Sqlite::addEntryAsteroid(const struct asteroid_t &asteroid)
     if (!db.isOpen())
         return false;
 
-    /* Significant speed up, using PRAGMA and TRANSCATION. */
-    db.exec("PRAGMA synchronous = OFF");
-    db.exec("PRAGMA Journal_mode = MEMORY");
-    db.exec("BEGIN TRANSCATION");
-
     QSqlQuery query(db);
+
+    /* Significant speed up, using PRAGMA and TRANSCATION. */
+    query.exec("PRAGMA synchronous = OFF");
+    query.exec("PRAGMA Journal_mode = MEMORY");
+    query.exec("BEGIN TRANSCATION");
+
     const QString prepare =
 	"REPLACE INTO " TABLE_ASTEROID "("
 	"name,"
@@ -159,11 +160,11 @@ bool Sqlite::addEntryAsteroid(const struct asteroid_t &asteroid)
 
     if (!query.exec()) {
         qWarning() << query.lastError().text();
-        db.exec("END TRANSCATION");
+        query.exec("END TRANSCATION");
         return false;
     }
 
-    db.exec("END TRANSCATION");
+    query.exec("END TRANSCATION");
     return true;
 }
 
@@ -174,12 +175,13 @@ bool Sqlite::addEntryComet(const comet_t &comet)
     if (!db.isOpen())
         return false;
 
-    /* Significant speed up, using PRAGMA and TRANSCATION. */
-    db.exec("PRAGMA synchronous = OFF");
-    db.exec("PRAGMA Journal_mode = MEMORY");
-    db.exec("BEGIN TRANSCATION");
-
     QSqlQuery query(db);
+
+    /* Significant speed up, using PRAGMA and TRANSCATION. */
+    query.exec("PRAGMA synchronous = OFF");
+    query.exec("PRAGMA Journal_mode = MEMORY");
+    query.exec("BEGIN TRANSCATION");
+
     const QString prepare =
 	"REPLACE INTO " TABLE_COMET "("
 	"name,"
@@ -225,11 +227,11 @@ bool Sqlite::addEntryComet(const comet_t &comet)
 
     if (!query.exec()) {
         qWarning() << query.lastError().text();
-        db.exec("END TRANSCATION");
+        query.exec("END TRANSCATION");
         return false;
     }
 
-    db.exec("END TRANSCATION");
+    query.exec("END TRANSCATION");
     return true;
 }
 
