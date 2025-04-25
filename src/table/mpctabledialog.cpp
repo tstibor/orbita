@@ -123,11 +123,11 @@ void MpcTableDialog::connectSignalsToSlots()
 	renderSelectedComets();
     });
     connect(this, &MpcTableDialog::numberRows, this, &MpcTableDialog::updateWindowTitle);
-    connect(m_CheckBoxOrbit, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_ORBIT); });
-    connect(m_CheckBoxName, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_NAME); });
-    connect(m_CheckBoxDate, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DATE); });
-    connect(m_CheckBoxMag, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_MAG); });
-    connect(m_CheckBoxDist, &QCheckBox::stateChanged, [=, this](int state) { switchOptions(state, RENDER_DIST); });
+    connect(m_CheckBoxOrbit, &QCheckBox::checkStateChanged, [=, this](int state) { switchOptions(state, RENDER_ORBIT); });
+    connect(m_CheckBoxName, &QCheckBox::checkStateChanged, [=, this](int state) { switchOptions(state, RENDER_NAME); });
+    connect(m_CheckBoxDate, &QCheckBox::checkStateChanged, [=, this](int state) { switchOptions(state, RENDER_DATE); });
+    connect(m_CheckBoxMag, &QCheckBox::checkStateChanged, [=, this](int state) { switchOptions(state, RENDER_MAG); });
+    connect(m_CheckBoxDist, &QCheckBox::checkStateChanged, [=, this](int state) { switchOptions(state, RENDER_DIST); });
     connect(m_SliderRadius, &QSlider::valueChanged, this, &MpcTableDialog::switchSliderValue);
     connect(m_LineEdit, &QLineEdit::customContextMenuRequested, [=, this](const QPoint &pos) {
 	MpcTableView *TableView = dynamic_cast<MpcTableView *>(m_TabWidget->currentWidget());
