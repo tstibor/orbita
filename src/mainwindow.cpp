@@ -109,7 +109,11 @@ void MainWindow::connectActions()
     });
 
     connect(m_SliderRadiusPlanetsSun, &QSlider::valueChanged, m_RenderWindow, &RenderWindow::setRadiusFactorPlanetsSun);
+#if QT_VERSION >= QT_VERSION_CHECK(6, 7, 0)
     connect(m_CheckBoxRadiusPlanetsSun, &QCheckBox::checkStateChanged, m_RenderWindow, &RenderWindow::setRadiusSamePlanetsSun);
+#else
+    connect(m_CheckBoxRadiusPlanetsSun, &QCheckBox::stateChanged, m_RenderWindow, &RenderWindow::setRadiusSamePlanetsSun);
+#endif
     connect(this, &MainWindow::updateRenderSettingAsteroid, m_RenderWindow, &RenderWindow::renderSettingAsteroid);
     connect(this, &MainWindow::updateRenderSettingComet, m_RenderWindow, &RenderWindow::renderSettingComet);
 
